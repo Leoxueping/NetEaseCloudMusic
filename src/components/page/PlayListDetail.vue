@@ -1,6 +1,55 @@
 <template>
     <div class="play-list-detail">
-        <div></div>
+        
+        <div class="list-header">
+            <div class="list-header-bg" :style="'background-image:url(' + playlist.coverImgUrl + ')'">
+            </div>
+            <div class="list-header-content">
+                <div class="list-header-left">
+                    <img class="list-img" :src="playlist.coverImgUrl">
+                </div>
+                <div class="list-header-right">
+                    <div style="font-size: 17px;">{{playlist.name}}</div>
+                    <div style="margin-top: 20px;">
+                        <div class="avat-img-container">
+                            <img class="avat-img" :src="creator.avatarUrl">
+                            <div class="avat-icon u-icon"></div>
+                        </div>
+                        
+                        {{creator.nickname}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-item-left">
+                <i style="font-size:20px;" class="icon-play-circle"></i>
+            </div>
+            <div class="list-item-middle">
+                播放全部
+                <span class="desc-text">(共{{playlist.trackCount}}首)</span>
+            </div>
+            <div class="list-item-right">
+                <i style="font-size: 20px; margin-right: 5px;" class="icon-list-ul"></i>多选
+            </div>
+        </div>
+
+        <div class="list-item" v-for="(item, index) in playlist.tracks">
+            <div class="list-item-left">
+                <span class="desc-text">{{index + 1}}</span>
+            </div>
+            <div class="list-item-middle">
+                <div>{{item.name}}</div>
+                <div class="desc-text list-desc-text">
+                    {{item.ar[0].name}}-{{item.al.name}}
+                </div>
+            </div>
+            <div class="list-item-right">
+                <i style="font-size: 20px; margin-right: 5px;" class="icon-list-ul"></i>
+            </div>
+        </div>
+        
     </div>
 </template>
 
@@ -9,22 +58,110 @@
         name: 'HostStation',
         data() {
             return {
-                id: ''
+                id: '',
+                playlist: '',
+                creator: ''
             }
         },
 
         created() {
+            const that = this;
             this.id = this.$route.params.id;
-            this.$http.get(baseUrl + '/personalized')
+            this.$http.get(baseUrl + '/playlist/detail?id=' + that.$route.params.id)
                     .then(function (response) {
                         let data = response.data;
                         if (data.code === 200) {
-                            // that.musices = data.result
+                            that.playlist = data.playlist;
+                            that.creator = data.playlist.creator;
                         }
                     })
                     .catch(function (error) {
+                        console.log(error)
                         alert('服务器错误!')
                     });
         }
     } 
 </script>
+
+<style scoped>
+    .list-header {
+        position: relative;
+        overflow: hidden;
+        padding: 30px 20px;
+    }
+    .list-header-bg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: 50%;
+        filter: blur(20px);
+        transform: scale(1.5);
+        z-index: 1;
+    }
+    .list-header-content {
+        display: flex;
+        background: #fff;
+        z-index: 2;
+    }
+    .list-header-left {
+        width: 126px;
+        height: 126px;
+        z-index: 2;
+    }
+    .list-header-right {
+        z-index: 2;
+        color: #fff;
+        flex: 1;
+        margin-left: 16px;
+    }
+    .list-img {
+        height: 100%;
+        width: 100%;    
+    }
+    .avat-img-container {
+        display: inline-block;
+        position: relative;
+    }
+    .avat-img {
+        height: 30px; 
+        width: 30px; 
+        border-radius: 50%;
+    }
+    .avat-icon {
+        background-position: -40px 0;
+    }
+
+    .list-item {
+        display: flex;
+        /*padding: 10px;  */
+        font-size: 18px;
+        line-height: 2;
+    }
+    .list-item-left {
+        width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .list-item-middle {
+        flex: 4;
+    }
+    .list-item-right {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .desc-text {
+        color: #949494;
+    }
+    .list-desc-text {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    
+</style>

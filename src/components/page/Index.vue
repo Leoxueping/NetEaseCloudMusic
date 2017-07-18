@@ -43,9 +43,9 @@
                     <div>
                         <img :src="item.picUrl" style="height: 100%; width: 100%;">
                     </div>
-                    <div style="text-align: left;">
+                    <p class="card-item-desc">
                         {{item.name}}
-                    </div>
+                    </p>
                 </div>
             </div>
         </div>
@@ -80,7 +80,7 @@
                         }
                     })
                     .catch(function (error) {
-                        alert('服务器错误!')
+                        // alert('服务器错误!')
                     });
         },
 
@@ -158,7 +158,6 @@
     }
 
     .music-card-item {
-        font-size: 13px;
         width: 32%;
         text-align: center;
         display: inline-block;
@@ -176,5 +175,15 @@
         color: #fff;
         right: 5px;
         top: 5px;
+    }
+    .music-card-item .card-item-desc {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        padding: 6px 2px 0 6px;
+        line-height: 1.2;
+        font-size: 13px;
+        text-align: left;
     }
 </style>

@@ -5,13 +5,17 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 
+/*全局css*/
+import style from './assets/css/style.css'
+import fontAwsome from './assets/css/font-awesome.min.css'
+
 
 //ajax插件axios
 Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
 
-window.baseUrl = 'http://119.29.201.53:8080'
+window.baseUrl = 'http://119.29.201.53:80'
 
 /* eslint-disable no-new */
 new Vue({
