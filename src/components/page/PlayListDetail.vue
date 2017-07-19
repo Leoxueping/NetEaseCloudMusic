@@ -40,13 +40,13 @@
                 <span class="desc-text">{{index + 1}}</span>
             </div>
             <div class="list-item-middle">
-                <div>{{item.name}}</div>
+                <div class="music-name">{{item.name}}</div>
                 <div class="desc-text list-desc-text">
                     {{item.ar[0].name}}-{{item.al.name}}
                 </div>
             </div>
             <div class="list-item-right">
-                <i style="font-size: 20px; margin-right: 5px;" class="icon-list-ul"></i>
+                <i style="font-size: 20px;" class="icon-indent-right"></i>
             </div>
         </div>
         
@@ -73,6 +73,7 @@
                         if (data.code === 200) {
                             that.playlist = data.playlist;
                             that.creator = data.playlist.creator;
+                            console.log(data)
                         }
                     })
                     .catch(function (error) {
@@ -148,10 +149,11 @@
         justify-content: center;
     }
     .list-item-middle {
-        flex: 4;
+        flex: 3;
+        width: 0;
     }
     .list-item-right {
-        flex: 1;
+        width: 80px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -159,9 +161,17 @@
     .desc-text {
         color: #949494;
     }
+    .music-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
     .list-desc-text {
         font-size: 12px;
         line-height: 1.5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     
 </style>

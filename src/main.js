@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import axios from 'axios'
+import store from './store'
 
 /*全局css*/
 import style from './assets/css/style.css'
@@ -21,6 +22,7 @@ window.baseUrl = 'http://119.29.201.53:80'
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })

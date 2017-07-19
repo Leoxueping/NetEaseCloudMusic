@@ -3,6 +3,7 @@
         <my-header></my-header>
         <my-nav></my-nav>
         <swipe></swipe>
+        <music-player></music-player>
         <div class="cards">
             <ul>
                 <li class="circle-li">
@@ -57,6 +58,7 @@
     import Swipe from '../template/Swipe.vue'
     import MyNav from '../template/Nav.vue'
     import MyHeader from '../template/Header.vue'
+    import MusicPlayer from '../template/MusicPlayer.vue'
     export default {
         name: 'indexPage',
         data() {
@@ -68,7 +70,8 @@
         components: {
             Swipe,
             MyNav,
-            MyHeader
+            MyHeader,
+            MusicPlayer
         },
         created() {
             const that = this;
@@ -81,11 +84,11 @@
                     })
                     .catch(function (error) {
                         // alert('服务器错误!')
+                        console.error('服务器错误', error)
                     });
         },
 
         methods: {
-            
             playListDetail(index) {
                 const that = this;
                 this.$router.replace({name: 'PlayListDetail', params: { id: that.musices[index].id }});
