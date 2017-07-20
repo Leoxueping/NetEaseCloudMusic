@@ -10,6 +10,8 @@ import store from './store'
 import style from './assets/css/style.css'
 import fontAwsome from './assets/css/font-awesome.min.css'
 
+/*事件bus，组件间传递事件*/
+Vue.prototype.$eventBus = new Vue({});
 
 //ajax插件axios
 Vue.prototype.$http = axios

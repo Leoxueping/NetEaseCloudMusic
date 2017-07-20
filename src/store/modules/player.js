@@ -1,7 +1,30 @@
 import axios from 'axios'
 
 const state = {
-    currentMusic: ''
+    currentMusic: '',
+    playInfo: {
+        isPlaying: false,
+        currentTime: 0,
+        totalTime: 0,
+        playInterval: null,
+        currentLyric: '暂无歌词'
+    },
+    playList: [],
+
+    isLoadingMusic: true,
+    showThePlayer: false,
+    track: {/*这是切换音乐的时候立即获得获得的数据，不需要ajax请求的*/
+        id: '',
+        arName: '',
+        musicName: ''
+    },
+    lyric: {
+
+    },
+    klyric: {
+
+    }
+    // showThePlayer: false
 }
 
 const getters = {
@@ -9,20 +32,21 @@ const getters = {
 }
 
 const actions = {
-    playThisMusic({ commit, state }, { id }) {
-        axios.get(baseUrl + '/song/detail?ids=' + id)/*获取歌曲详情*/
+    changeMusic({ commit, state }, payload) {
+        commit('changeMusicTrack', payload)
+        axios.get(baseUrl + '/song/detail?ids=' + payload.id)/*获取歌曲详情*/
                 .then(response => {
                     let data = response.data;
                     let currentMusic = null;
                     if (data.code === 200) {
                         currentMusic = data.songs[0]
 
-                        axios.get(baseUrl + '/music/url?id=' + id)/*获取歌曲URL*/
+                        axios.get(baseUrl + '/music/url?id=' + payload.id)/*获取歌曲URL*/
                                 .then(response => {
                                     let data = response.data;
                                     if (data.code === 200) {
                                         currentMusic.urlInfo = data.data[0];
-                                        commit('playThisMusic', {
+                                        commit('changeMusic', {
                                             currentMusic
                                         })
                                     }
@@ -38,14 +62,57 @@ const actions = {
                 });
 
         
+    },
+
+    getLyric({ commit, state }) {
+        axios.get(baseUrl + '/lyric?id=' + state.track.id)/*获取歌曲详情*/
+                .then(response => {
+                    let data = response.data;
+                    if (data.code === 200) {
+                        commit('setLyric', data);
+                    }
+                })
+                .catch(error => {
+                    console.error(error)
+                });
     }
 }
 
 const mutations = {
-    playThisMusic(state, { currentMusic }) {
-        // state.currentMusic = payload.id;
-        console.log(currentMusic)
+    changeMusic(state, { currentMusic }) {
         state.currentMusic = currentMusic;
+        // state.showThePlayer = true;
+    },
+    beginPlay(state, { playInterval }) {
+        const playInfo = state.playInfo;
+        playInfo.isPlaying = true;
+        playInfo.playInterval = playInterval;
+        state.isLoadingMusic = false;
+    },
+    pausePlay(state) {
+        clearInterval(state.playInfo.playInterval);
+        state.playInfo.playInterval = null;
+        state.playInfo.isPlaying = false;
+    },
+    playEnded(state) {
+        clearInterval(state.playInfo.playInterval);
+        state.playInfo.playInterval = null;
+        state.playInfo.isPlaying = false;
+    },
+    changeMusicTrack(state, payload) {
+        // let theAudio = this.$refs.musicPlayerAudio;
+        // if (this.playInfo.isPlaying) {
+        //     this.playOrPause();    
+        // }
+        state.playInfo.isPlaying = false;
+        state.track = payload;
+        state.showThePlayer = true;
+        state.isLoadingMusic = true;
+    },
+
+    setLyric(state, payload) {
+        state.lyric = payload.lrc;
+        state.klyric = payload.klyric;
     }
 }
 

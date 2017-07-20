@@ -1,27 +1,46 @@
 <template>
     <div id="app">
-        
-        <router-view></router-view>
+        <transition :name="transitionName" mode="out-in">
+            <router-view name="header"></router-view>
+        </transition>
+        <transition :name="transitionName" mode="out-in">
+            <router-view name="nav"></router-view>
+        </transition>
+        <transition :name="transitionName" mode="out-in">
+            <router-view></router-view>
+        </transition>
+        <music-player></music-player>
     </div>
 </template>
 
 <script>
-    import MyNav from './components/template/Nav.vue'
-    import MyHeader from './components/template/Header.vue'
+    import MusicPlayer from './components/template/MusicPlayer.vue'
     // import Index from './components/page/Index.vue'
     // import RecMusicList from './components/te/RecMusicList.vue'
     export default {
         name: 'app',
         data() {
             return {
-
+                transitionName: 'slide-right'
             }
         },
         components: {
-            MyNav,
             // Swipe,
             // index,
-            MyHeader
+            MusicPlayer
+        },
+        watch: {
+            '$route'(to, from) {
+                const order = {
+                    Index: 0,
+                    PlayList: 1,
+                    HostStation: 2,
+                    RankList: 3,
+                    PlayListDetail: 4
+                }
+
+                this.transitionName = order[to.name] > order[from.name] ? 'slide-left' : 'slide-right';
+            }
         }
     }
 </script>

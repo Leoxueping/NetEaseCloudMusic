@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <my-header></my-header>
-        <my-nav></my-nav>
+    <div class="page-container">
         主播电台
     </div>
 </template>
@@ -19,8 +17,7 @@
             }
         },
         components: {
-            MyNav,
-            MyHeader
+            
         }
     }
 </script>

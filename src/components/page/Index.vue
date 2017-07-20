@@ -1,9 +1,6 @@
 <template>
-    <div>
-        <my-header></my-header>
-        <my-nav></my-nav>
+    <div class="page-container">
         <swipe></swipe>
-        <music-player></music-player>
         <div class="cards">
             <ul>
                 <li class="circle-li">
@@ -36,29 +33,31 @@
                 </div>
             </div>
             <div class="music-cards">
-                <div v-for="(item, index) in musices" class="music-card-item" @click="playListDetail(index)">
-                    <div class="my-badge">
-                        <i class="icon-headphones"></i>
-                        {{parseInt(item.playCount / 10000)}}万
-                    </div>
-                    <div>
-                        <img :src="item.picUrl" style="height: 100%; width: 100%;">
-                    </div>
-                    <p class="card-item-desc">
-                        {{item.name}}
-                    </p>
+                <div v-for="(item, index) in musices" class="music-card-item">
+                    <router-link :to="{ name: 'PlayListDetail', params: { id: musices[index].id }}">
+                        <div class="my-badge">
+                            <i class="icon-headphones"></i>
+                            {{parseInt(item.playCount / 10000)}}万
+                        </div>
+                        <div>
+                            <img :src="item.picUrl" style="height: 100%; width: 100%;">
+                        </div>
+                        <p class="card-item-desc">
+                            {{item.name}}
+                        </p>
+                    </router-link>
                 </div>
             </div>
         </div>
+        <!-- <music-player></music-player> -->
+
     </div>
         
 </template>
 
 <script>
     import Swipe from '../template/Swipe.vue'
-    import MyNav from '../template/Nav.vue'
-    import MyHeader from '../template/Header.vue'
-    import MusicPlayer from '../template/MusicPlayer.vue'
+    // import MusicPlayer from '../template/MusicPlayer.vue'
     export default {
         name: 'indexPage',
         data() {
@@ -69,9 +68,6 @@
         },
         components: {
             Swipe,
-            MyNav,
-            MyHeader,
-            MusicPlayer
         },
         created() {
             const that = this;
@@ -79,7 +75,7 @@
                     .then(function (response) {
                         let data = response.data;
                         if (data.code === 200) {
-                            that.musices = data.result
+                            that.musices = data.result;
                         }
                     })
                     .catch(function (error) {
@@ -89,10 +85,10 @@
         },
 
         methods: {
-            playListDetail(index) {
-                const that = this;
-                this.$router.replace({name: 'PlayListDetail', params: { id: that.musices[index].id }});
-            }
+            // playListDetail(index) {
+            //     const that = this;
+            //     this.$router.replace({name: 'PlayListDetail', params: { id: that.musices[index].id }});
+            // }
         }
     }
 </script>
@@ -187,6 +183,7 @@
         padding: 6px 2px 0 6px;
         line-height: 1.2;
         font-size: 13px;
+        height: 36px;
         text-align: left;
     }
 </style>

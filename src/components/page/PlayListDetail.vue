@@ -1,59 +1,73 @@
 <template>
-    <div class="play-list-detail">
-        
-        <div class="list-header">
-            <div class="list-header-bg" :style="'background-image:url(' + playlist.coverImgUrl + ')'">
-            </div>
-            <div class="list-header-content">
-                <div class="list-header-left">
-                    <img class="list-img" :src="playlist.coverImgUrl">
-                </div>
-                <div class="list-header-right">
-                    <div style="font-size: 17px;">{{playlist.name}}</div>
-                    <div style="margin-top: 20px;">
-                        <div class="avat-img-container">
-                            <img class="avat-img" :src="creator.avatarUrl">
-                            <div class="avat-icon u-icon"></div>
+    <div>
+        <transition name="slide-left">
+            <div class="play-list-detail page-container" v-if="playlist && creator">
+                
+                <div class="list-header">
+                    <div class="list-header-bg" :style="'background-image:url(' + playlist.coverImgUrl + ')'">
+                    </div>
+                    <div class="list-header-content">
+                        <div class="list-header-left">
+                            <img class="list-img" :src="playlist.coverImgUrl">
                         </div>
-                        
-                        {{creator.nickname}}
+                        <div class="list-header-right">
+                            <div style="font-size: 17px;">{{playlist.name}}</div>
+                            <div style="margin-top: 20px;">
+                                <div class="avat-img-container">
+                                    <img class="avat-img" :src="creator.avatarUrl">
+                                    <div class="avat-icon u-icon"></div>
+                                </div>
+                                
+                                {{creator.nickname}}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="list-item">
-            <div class="list-item-left">
-                <i style="font-size:20px;" class="icon-play-circle"></i>
-            </div>
-            <div class="list-item-middle">
-                播放全部
-                <span class="desc-text">(共{{playlist.trackCount}}首)</span>
-            </div>
-            <div class="list-item-right">
-                <i style="font-size: 20px; margin-right: 5px;" class="icon-list-ul"></i>多选
-            </div>
-        </div>
-
-        <div class="list-item" v-for="(item, index) in playlist.tracks">
-            <div class="list-item-left">
-                <span class="desc-text">{{index + 1}}</span>
-            </div>
-            <div class="list-item-middle">
-                <div class="music-name">{{item.name}}</div>
-                <div class="desc-text list-desc-text">
-                    {{item.ar[0].name}}-{{item.al.name}}
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <i style="font-size:20px;" class="icon-play-circle"></i>
+                    </div>
+                    <div class="list-item-middle">
+                        播放全部
+                        <span class="desc-text">(共{{playlist.trackCount}}首)</span>
+                    </div>
+                    <div class="list-item-right">
+                        <i style="font-size: 20px; margin-right: 5px;" class="icon-list-ul"></i>多选
+                    </div>
                 </div>
+
+                <div @click.stop="changeMusic(index)" class="list-item" v-for="(item, index) in playlist.tracks">
+                    <div class="list-item-left">
+                        <span class="desc-text">{{index + 1}}</span>
+                    </div>
+                    <div class="list-item-middle">
+                        <div class="music-name">{{item.name}}</div>
+                        <div class="desc-text list-desc-text">
+                            {{item.ar[0].name}}-{{item.al.name}}
+                        </div>
+                    </div>
+                    <div class="list-item-right">
+                        <i style="font-size: 20px;" class="icon-indent-right"></i>
+                    </div>
+                </div>
+                
+
             </div>
-            <div class="list-item-right">
-                <i style="font-size: 20px;" class="icon-indent-right"></i>
+        </transition>
+        <transition name="slide-left">
+            <div style="height: 100vh;" v-if="!playlist || !creator">
+                <loading></loading>
             </div>
-        </div>
-        
+        </transition>
     </div>
 </template>
 
 <script>
+
+    import MusicPlayer from '../template/MusicPlayer.vue'
+    import Loading from '../template/Loading.vue'
+
     export default {
         name: 'HostStation',
         data() {
@@ -80,6 +94,24 @@
                         console.log(error)
                         alert('服务器错误!')
                     });
+        },
+
+        methods: {
+            changeMusic(index) {
+                const track = this.playlist.tracks[index];
+                
+                this.$store.dispatch('changeMusic', {
+                    id: track.id,
+                    arName: track.ar[0].name,
+                    musicName: track.name
+                });
+                this.$eventBus.$emit('changeMusic');
+            }
+        },
+
+        components: {
+            MusicPlayer,
+            Loading
         }
     } 
 </script>
@@ -172,6 +204,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        margin-top: -7px;
     }
     
 </style>

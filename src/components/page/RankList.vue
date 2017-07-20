@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <my-header></my-header>
-        <my-nav></my-nav>
+    <div class="container">
         排行榜
     </div>
 </template>
@@ -19,8 +17,7 @@
             }
         },
         components: {
-            MyNav,
-            MyHeader
+            
         }
     }
 </script>

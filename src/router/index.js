@@ -5,6 +5,10 @@ import PlayList from '@/components/page/PlayList'
 import HostStation from '@/components/page/HostStation'
 import RankList from '@/components/page/RankList'
 import PlayListDetail from '@/components/page/PlayListDetail'
+import MusicPlayerDetail from '@/components/page/MusicPlayerDetail'
+import MyNav from '@/components/template/Nav'
+import MyHeader from '@/components/template/Header'
+import Temp from '@/components/template/Temp'
 
 Vue.use(Router)
 
@@ -12,26 +16,54 @@ export default new Router({
     routes: [{
         path: '/Index',
         name: 'Index',
-        component: Index
+        components: {
+            default: Index,
+            header: MyHeader,
+            nav: MyNav
+        }
     }, { 
         path: '/', 
         redirect: '/Index' 
     }, {
         path: '/PlayList',
         name: 'PlayList',
-        component: PlayList 
+        components: {
+            default: PlayList,
+            header: MyHeader,
+            nav: MyNav
+        } 
     }, {
         path: '/HostStation',
         name: 'HostStation',
-        component: HostStation 
+        components: {
+            default: HostStation,
+            header: MyHeader,
+            nav: MyNav
+        } 
     }, {
         path: '/RankList',
         name: 'RankList',
-        component: RankList 
+        components: {
+            default: RankList,
+            header: MyHeader,
+            nav: MyNav
+        } 
     }, {
-        path: '/PlayListDetail',
+        path: '/PlayListDetail/:id',
         name: 'PlayListDetail',
-        component: PlayListDetail 
+        components: {
+            default: PlayListDetail,
+            header: Temp,
+            nav: Temp
+        }
+    }, {
+        path: '/MusicPlayerDetail/:id',
+        name: 'MusicPlayerDetail',
+        components: {
+            default: MusicPlayerDetail,
+            header: Temp,
+            nav: Temp
+        }
     }],
     linkActiveClass: 'active'
 })

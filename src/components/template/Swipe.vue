@@ -31,8 +31,9 @@
                         that.bannerInterval = '';
                     }
                     let width = items[0].offsetWidth;
-                    items[that.current + 1].style.transform = 'translateX('+ width +'px)';
+                    
                     items[that.current].style['z-index'] = 65535;
+                    items[that.current + 1].style.transform = 'translateX('+ width +'px)';
 
                     that.bannerInterval = setInterval(function () {
                         
@@ -54,15 +55,14 @@
                 let width = items[0].offsetWidth,
                     length = that.banners.length;
                 // console.log(width)
-                
-                items[that.current].style.transform = 'translateX(-'+ width +'px)';
                 items[that.current].style['z-index'] = 65535;
+                items[that.current].style.transform = 'translateX(-'+ width +'px)';
                 // console.log(that.$refs.swipeItem[that.current])
                 that.current = (that.current + 1) % length;
-                items[that.current].style.transform = 'translateX(0)';
                 items[that.current].style['z-index'] = 65535;
-                items[(that.current + 1) % length].style.transform = 'translateX('+ width +'px)';
+                items[that.current].style.transform = 'translateX(0)';
                 items[(that.current + 1) % length].style['z-index'] = -1;
+                items[(that.current + 1) % length].style.transform = 'translateX('+ width +'px)';
             }
         },
 
