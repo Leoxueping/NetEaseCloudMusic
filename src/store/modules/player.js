@@ -123,7 +123,7 @@ const mutations = {
 
     setThePlayInfo(state, { currentTime, percent }) {
         state.playInfo.currentTime = currentTime;
-        state.playInfo.percent = currentTime;
+        state.playInfo.percent = percent;
     }
 }
 

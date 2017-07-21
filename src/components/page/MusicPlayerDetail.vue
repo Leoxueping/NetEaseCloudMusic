@@ -37,7 +37,7 @@
                 <span>{{playInfo.currentTime | time}}</span>
                 <div class="bar-wrapper">
                     <div class="outer-bar">
-                        <div class="inner-bar" :style="{width: playInfo.percent + '%'}"></div>
+                        <div class="inner-bar" :style="{width: playInfo.percent * 100 + '%'}"></div>
                     </div>
                 </div>
                 <span>{{playInfo.totalTime | time}}</span>
@@ -270,6 +270,7 @@
         width: 0;
         background: #ce3d3e;
         position: relative;
+        transition: all .3s linear;
     }
     .inner-bar:after {
         content: '';

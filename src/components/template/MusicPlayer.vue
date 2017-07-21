@@ -109,6 +109,7 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                             percent = theAudio.currentTime / theAudio.duration;
 
                         if(isNaN(percent)) return;
+                        console.log(percent)
                         if(percent <= 0.5){
                             rightcircle.style.cssText = "transform: rotate("+ (-135 + 360 * percent) +"deg)";
                             leftcircle.style.cssText = "transform: rotate(-134deg)";

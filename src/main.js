@@ -19,7 +19,8 @@ Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
 
-window.baseUrl = 'http://119.29.201.53:80'
+// window.baseUrl = 'http://119.29.201.53:80'
+window.baseUrl = 'http://localhost:3000'
 
 /*初始化过滤器*/
 filter(Vue)
