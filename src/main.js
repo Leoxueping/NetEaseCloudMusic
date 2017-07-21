@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import store from './store'
+import filter from './filter/index.js'
 
 /*全局css*/
 import style from './assets/css/style.css'
@@ -19,6 +20,9 @@ Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 window.baseUrl = 'http://119.29.201.53:80'
+
+/*初始化过滤器*/
+filter(Vue)
 
 /* eslint-disable no-new */
 new Vue({

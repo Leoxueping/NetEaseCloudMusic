@@ -7,7 +7,8 @@ const state = {
         currentTime: 0,
         totalTime: 0,
         playInterval: null,
-        currentLyric: '暂无歌词'
+        currentLyric: '暂无歌词',
+        percent: 0
     },
     playList: [],
 
@@ -83,11 +84,12 @@ const mutations = {
         state.currentMusic = currentMusic;
         // state.showThePlayer = true;
     },
-    beginPlay(state, { playInterval }) {
+    beginPlay(state, { playInterval, totalTime }) {
         const playInfo = state.playInfo;
         playInfo.isPlaying = true;
         playInfo.playInterval = playInterval;
         state.isLoadingMusic = false;
+        state.playInfo.totalTime = totalTime;
     },
     pausePlay(state) {
         clearInterval(state.playInfo.playInterval);
@@ -113,6 +115,15 @@ const mutations = {
     setLyric(state, payload) {
         state.lyric = payload.lrc;
         state.klyric = payload.klyric;
+    },
+
+    hideThePlayer(state) {
+        state.showThePlayer = false;
+    },
+
+    setThePlayInfo(state, { currentTime, percent }) {
+        state.playInfo.currentTime = currentTime;
+        state.playInfo.percent = currentTime;
     }
 }
 

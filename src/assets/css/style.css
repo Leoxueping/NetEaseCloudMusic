@@ -250,11 +250,29 @@ li {
     background: #eee;
 }
 
+.img-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50%;
+    filter: blur(20px) brightness(50%);
+    transform: scale(1.5);
+    z-index: 1;
+}
+
+.desc-text {
+    color: #949494;
+}
+
 a {
     color: #333;
 }
 
-a:hover {
+a:hover, a:focus {
     color: #333;
     text-decoration: none;
 }
@@ -301,5 +319,39 @@ a:hover {
 .slide-right-leave-to
 /* .slide-fade-leave-active for <2.1.8 */ {
   transform: translateX(100vw);
+  opacity: 0;
+}
+
+.slide-up-enter-active {
+  transition: all .3s ease;
+}
+.slide-up-leave-active {
+  transition: all .3s ease;
+}
+.slide-up-enter
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateY(100vh);
+  opacity: 0;
+}
+.slide-up-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateY(-100vh);
+  opacity: 0;
+}
+
+.slide-down-enter-active {
+  transition: all .3s ease;
+}
+.slide-down-leave-active {
+  transition: all .3s ease;
+}
+.slide-down-enter
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateY(-100vh);
+  opacity: 0;
+}
+.slide-down-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateY(100vh);
   opacity: 0;
 }

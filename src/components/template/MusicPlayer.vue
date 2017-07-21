@@ -1,35 +1,37 @@
 <template>
     <transition name="slide-up">
-        <router-link :to="{ name: 'MusicPlayerDetail', params: { id: track.id }}">
-            <div class="music-player" v-show="showThePlayer">
-                <div class="music-player-header">
-                    <img class="al-picture" :src="currentMusic && currentMusic.al.picUrl">
-                    <div class="loading-music-icon" v-show="isLoadingMusic">
-                        <i class="icon-spinner icon-spin"></i>
-                    </div>
-                    
+        <div class="music-player" v-show="showThePlayer">
+
+            <router-link class="music-player-header" :to="{ name: 'MusicPlayerDetail', params: { id: track.id }}">
+                <img class="al-picture" :src="currentMusic && currentMusic.al.picUrl">
+                <div class="loading-music-icon" v-show="isLoadingMusic">
+                    <i class="icon-spinner icon-spin"></i>
                 </div>
-                <div class="music-player-name">
-                    <div class="music-name">{{track.musicName}}</div>
-                    <div class="desc-text ar-name">{{track.arName}}</div>
-                </div>
-                <div class="music-player-controller">
-                    <div class="progress-circle">
-                        <div class="left-part">
-                            <div class="left-circle" ref="leftCircle"></div>
-                        </div>
-                        <div class="right-part">
-                            <div class="right-circle" ref="rightCircle"></div>
-                        </div>
-                        <i @click="playOrPause" :class="playInfo.isPlaying ? 'icon-pause pause-icon' : 'icon-play play-icon'"></i>
+            </router-link>
+
+            <router-link class="music-player-name" :to="{ name: 'MusicPlayerDetail', params: { id: track.id }}">
+                <div class="music-name">{{track.musicName}}</div>
+                <div class="desc-text ar-name">{{track.arName}}</div>
+            </router-link>
+
+            <div class="music-player-controller">
+                <div class="progress-circle">
+                    <div class="left-part">
+                        <div class="left-circle" ref="leftCircle"></div>
                     </div>
-                    <div class="show-play-list">
-                        <i class="icon-indent-right"></i>
+                    <div class="right-part">
+                        <div class="right-circle" ref="rightCircle"></div>
                     </div>
+                    <i @click="playOrPause" :class="playInfo.isPlaying ? 'icon-pause pause-icon' : 'icon-play play-icon'"></i>
                 </div>
-                <audio @canplay.self="bufferEnded" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url"></audio>
+                <div class="show-play-list">
+                    <i class="icon-indent-right"></i>
+                </div>
             </div>
-        </router-link>
+
+            <audio @canplay.self="bufferEnded" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url"></audio>
+
+        </div>
     </transition>
 </template>
 
@@ -115,6 +117,8 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                             leftcircle.style.cssText = "transform: rotate("+ (-135 + 360 * (percent - 0.5)) +"deg)";
                         }
 
+                        that.$store.commit('setThePlayInfo', { currentTime: theAudio.currentTime, percent });
+
                         if (theAudio.ended) {
                             that.$store.commit('playEnded');
                         }
@@ -122,7 +126,8 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                     }, 500);
                     theAudio.play();
                     that.$store.commit('beginPlay', {
-                        playInterval: interval
+                        playInterval: interval,
+                        totalTime: theAudio.duration
                     });
                 }
                 

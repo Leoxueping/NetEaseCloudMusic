@@ -1,80 +1,81 @@
 <template>
-    <div>
-        <transition name="slide-left">
-            <div class="play-list-detail page-container" v-if="playlist && creator">
-                
-                <div class="list-header">
-                    <div class="list-header-bg" :style="'background-image:url(' + playlist.coverImgUrl + ')'">
+    <transition name="slide-left">
+        <div class="play-list-detail page-container">
+            
+            <div class="list-header">
+                <div class="img-bg" :style="'background-image:url(' + playlist.coverImgUrl + ')'">
+                </div>
+                <div class="list-header-content">
+                    <div class="list-header-left">
+                        <img class="list-img" :src="playlist.coverImgUrl">
                     </div>
-                    <div class="list-header-content">
-                        <div class="list-header-left">
-                            <img class="list-img" :src="playlist.coverImgUrl">
-                        </div>
-                        <div class="list-header-right">
-                            <div style="font-size: 17px;">{{playlist.name}}</div>
-                            <div style="margin-top: 20px;">
-                                <div class="avat-img-container">
-                                    <img class="avat-img" :src="creator.avatarUrl">
-                                    <div class="avat-icon u-icon"></div>
-                                </div>
-                                
-                                {{creator.nickname}}
+                    <div class="list-header-right">
+                        <div style="font-size: 17px;">{{playlist.name}}</div>
+                        <div style="margin-top: 20px;">
+                            <div class="avat-img-container">
+                                <img class="avat-img" :src="creator.avatarUrl">
+                                <div class="avat-icon u-icon"></div>
                             </div>
+                            
+                            {{creator.nickname}}
                         </div>
                     </div>
                 </div>
-
-                <div class="list-item">
-                    <div class="list-item-left">
-                        <i style="font-size:20px;" class="icon-play-circle"></i>
-                    </div>
-                    <div class="list-item-middle">
-                        播放全部
-                        <span class="desc-text">(共{{playlist.trackCount}}首)</span>
-                    </div>
-                    <div class="list-item-right">
-                        <i style="font-size: 20px; margin-right: 5px;" class="icon-list-ul"></i>多选
-                    </div>
-                </div>
-
-                <div @click.stop="changeMusic(index)" class="list-item" v-for="(item, index) in playlist.tracks">
-                    <div class="list-item-left">
-                        <span class="desc-text">{{index + 1}}</span>
-                    </div>
-                    <div class="list-item-middle">
-                        <div class="music-name">{{item.name}}</div>
-                        <div class="desc-text list-desc-text">
-                            {{item.ar[0].name}}-{{item.al.name}}
-                        </div>
-                    </div>
-                    <div class="list-item-right">
-                        <i style="font-size: 20px;" class="icon-indent-right"></i>
-                    </div>
-                </div>
-                
-
             </div>
-        </transition>
-        <transition name="slide-left">
-            <div style="height: 100vh;" v-if="!playlist || !creator">
+
+            <div class="list-item">
+                <div class="list-item-left">
+                    <i style="font-size:20px;" class="icon-play-circle"></i>
+                </div>
+                <div class="list-item-middle">
+                    播放全部
+                    <span class="desc-text">(共{{playlist.trackCount}}首)</span>
+                </div>
+                <div class="list-item-right">
+                    <i style="font-size: 20px; margin-right: 5px;" class="icon-list-ul"></i>多选
+                </div>
+            </div>
+
+            <div v-if="playlist.tracks" @click.stop="changeMusic(index)" class="list-item" v-for="(item, index) in playlist.tracks">
+                <div class="list-item-left">
+                    <span class="desc-text">{{index + 1}}</span>
+                </div>
+                <div class="list-item-middle">
+                    <div class="music-name">{{item.name}}</div>
+                    <div class="desc-text list-desc-text">
+                        {{item.ar[0].name}}-{{item.al.name}}
+                    </div>
+                </div>
+                <div class="list-item-right">
+                    <i style="font-size: 20px;" class="icon-indent-right"></i>
+                </div>
+            </div>
+            <div v-if="!playlist.tracks" style="height: calc(100vh - 282px);">
                 <loading></loading>
             </div>
-        </transition>
-    </div>
+        </div>
+    </transition>
 </template>
 
 <script>
 
     import MusicPlayer from '../template/MusicPlayer.vue'
     import Loading from '../template/Loading.vue'
+    import defaultCover from '../../assets/default_cover.png'
+    import defaultUser from '../../assets/user-default.png'
 
     export default {
         name: 'HostStation',
         data() {
             return {
                 id: '',
-                playlist: '',
-                creator: ''
+                playlist: {
+                    coverImgUrl: defaultCover
+                },
+                creator: {
+                    nickname: '昵称',
+                    avatarUrl: defaultUser
+                }
             }
         },
 
@@ -121,19 +122,6 @@
         position: relative;
         overflow: hidden;
         padding: 30px 20px;
-    }
-    .list-header-bg {
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: 50%;
-        filter: blur(20px);
-        transform: scale(1.5);
-        z-index: 1;
     }
     .list-header-content {
         display: flex;
@@ -190,9 +178,7 @@
         align-items: center;
         justify-content: center;
     }
-    .desc-text {
-        color: #949494;
-    }
+    
     .music-name {
         white-space: nowrap;
         overflow: hidden;

@@ -31,6 +31,7 @@
         },
         watch: {
             '$route'(to, from) {
+                /*页面跳转动画*/
                 const order = {
                     Index: 0,
                     PlayList: 1,
@@ -39,7 +40,14 @@
                     PlayListDetail: 4
                 }
 
-                this.transitionName = order[to.name] > order[from.name] ? 'slide-left' : 'slide-right';
+                if (to.name === 'MusicPlayerDetail') {
+                    this.transitionName = 'slide-up';
+                }else if(from.name === 'MusicPlayerDetail') {
+                    this.transitionName = 'slide-down';
+                }else {
+                    this.transitionName = order[to.name] > order[from.name] ? 'slide-left' : 'slide-right';
+                }
+
             }
         }
     }
