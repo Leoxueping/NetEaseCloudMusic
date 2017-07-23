@@ -68,7 +68,10 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
             // this.$store.dispatch('playThisMusic', {
             //     id: 95447
             // })
-            this.$store.dispatch('getLyric');
+            const that = this;
+            this.$eventBus.$on('playOrPause', () => {
+                that.playOrPause();
+            })
 
         },
         mounted() {
@@ -109,7 +112,7 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                             percent = theAudio.currentTime / theAudio.duration;
 
                         if(isNaN(percent)) return;
-                        console.log(percent)
+                        console.log(theAudio.currentTime)
                         if(percent <= 0.5){
                             rightcircle.style.cssText = "transform: rotate("+ (-135 + 360 * percent) +"deg)";
                             leftcircle.style.cssText = "transform: rotate(-134deg)";
@@ -124,7 +127,7 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                             that.$store.commit('playEnded');
                         }
 
-                    }, 500);
+                    }, 1000);
                     theAudio.play();
                     that.$store.commit('beginPlay', {
                         playInterval: interval,

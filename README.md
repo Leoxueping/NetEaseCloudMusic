@@ -5,6 +5,9 @@
 ## 接口来自
 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
+## 技术栈
+vue2 + vuex + vue-router + axios
+
 ## 运行
 
 ### 运行API接口

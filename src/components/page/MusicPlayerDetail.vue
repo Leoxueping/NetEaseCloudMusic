@@ -45,7 +45,7 @@
             <div class="play-control">
                 <i class="play-control-item icon-refresh"></i>
                 <i class="play-control-item icon-step-backward"></i>
-                <i :class="['play-control-item', playInfo.isPlaying ? 'icon-pause' : 'icon-play']"></i>
+                <i :class="['play-control-item', playInfo.isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
                 <i class="play-control-item icon-step-forward"></i>
                 <i class="play-control-item icon-indent-right"></i>
             </div>
@@ -81,6 +81,11 @@
                 lyric: state => state.player.lyric,
                 klyric: state => state.player.klyric
             })
+        },
+        methods: {
+            playOrPause() {
+                this.$eventBus.$emit('playOrPause');
+            }
         }
     }
     
@@ -157,7 +162,7 @@
     }
     .desc-text {
         font-size: 1.5rem;
-
+        margin-top: -.5rem;
     }
     .music-name {
         height: 3rem;
@@ -176,17 +181,18 @@
     .cd-container {
         margin: 8rem auto 0;
         width: 65%;
+        max-width: 45rem;
         padding: 3rem;
         position: relative;
     }
     .cd-ar-picture {
         width: 100%;
+        animation: cd_rotate 5s linear infinite;
     }
     .cd-ar-picture img {
         width: 100%;
         height: auto;
         border-radius: 50%;
-        animation: cd_rotate 3s linear infinite;
     }
     .cd-wrapper {
         background-image: url(../../assets/cd_wrapper.99bfb20.png);

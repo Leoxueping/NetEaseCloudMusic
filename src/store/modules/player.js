@@ -35,47 +35,32 @@ const getters = {
 const actions = {
     changeMusic({ commit, state }, payload) {
         commit('changeMusicTrack', payload)
-        axios.get(baseUrl + '/song/detail?ids=' + payload.id)/*获取歌曲详情*/
-                .then(response => {
-                    let data = response.data;
-                    let currentMusic = null;
-                    if (data.code === 200) {
-                        currentMusic = data.songs[0]
-
-                        axios.get(baseUrl + '/music/url?id=' + payload.id)/*获取歌曲URL*/
-                                .then(response => {
-                                    let data = response.data;
-                                    if (data.code === 200) {
-                                        currentMusic.urlInfo = data.data[0];
-                                        commit('changeMusic', {
-                                            currentMusic
-                                        })
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error(error)
-                                });
-
-                    }
+        const id = payload.id;
+        function getDetail() {
+            return axios.get('/song/detail?ids=' + id);/*获取歌曲详情*/
+        }
+        function getURL() {
+            return axios.get('/music/url?id=' + id);/*获取歌曲URL*/
+        }
+        function getLyric() {
+            return axios.get('/lyric?id=' + id)
+        }
+        axios.all([getDetail(), getURL(), getLyric()])
+            .then(axios.spread((detail, theUrl, lyric) => {
+                let currentMusic = null;
+                console.log(detail, theUrl, lyric)
+                currentMusic = detail.data.songs[0];
+                currentMusic.urlInfo = theUrl.data.data[0];
+                commit('changeMusic', {
+                    currentMusic
                 })
-                .catch(error => {
-                    console.error(error)
-                });
-
+                commit('setLyric', lyric.data);
+            }))
+            .catch(error => {
+                console.error(error)
+            });
+       
         
-    },
-
-    getLyric({ commit, state }) {
-        axios.get(baseUrl + '/lyric?id=' + state.track.id)/*获取歌曲详情*/
-                .then(response => {
-                    let data = response.data;
-                    if (data.code === 200) {
-                        commit('setLyric', data);
-                    }
-                })
-                .catch(error => {
-                    console.error(error)
-                });
     }
 }
 
@@ -113,6 +98,41 @@ const mutations = {
     },
 
     setLyric(state, payload) {
+
+        /*把歌词格式化进一个对象里面*/
+        // let lrcs1 = payload.lrc.lyric.split(']');
+        // let lrcs = lrcs1.map(item => {
+        //     let items = item.split('[');
+        //     return items.filter(itemItem => (itemItem.replace(/(^\s*)|(\s*$)/g, "") !== ''))
+        //     // return item.split('[');
+        // })
+        
+        // lrcs = lrcs.reduce((prev, curr) => prev.concat(curr));
+        // console.log(lrcs)
+        // let lyric = {};
+        // const timeToSecond = time => {
+        //     time = time.slice(0, 5);
+        //     time = time.split(':');
+        //     return parseInt(time[0]) * 60 + parseInt(time[1]) + '';
+        // } 
+        // if (lrcs[0].indexOf('00:00') !== -1) {
+        //     lrcs.forEach((item, index) => {
+        //         if(index % 2 === 0) {
+        //             lyric[timeToSecond(item)] = lrcs[index + 1];
+        //         }
+        //     })
+        // }else {
+        //     lyric['0'] = lrcs[0];
+        //     lrcs.forEach((item, index) => {
+        //         if(index % 2 !== 0) {
+        //             lyric[timeToSecond(item)] = lrcs[index + 1];
+        //         }
+        //     })
+        // }
+        let lyric = payload.lrc.lyric.split(String.fromCharCode(10));
+
+        console.log(lyric)
+        
         state.lyric = payload.lrc;
         state.klyric = payload.klyric;
     },
