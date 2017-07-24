@@ -71,7 +71,7 @@
         },
         created() {
             const that = this;
-            this.$http.get(baseUrl + '/personalized')
+            this.$http.get('/personalized')
                     .then(function (response) {
                         let data = response.data;
                         if (data.code === 200) {

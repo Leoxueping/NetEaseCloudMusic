@@ -82,7 +82,7 @@
         created() {
             const that = this;
             this.id = this.$route.params.id;
-            this.$http.get(baseUrl + '/playlist/detail?id=' + that.$route.params.id)
+            this.$http.get('/playlist/detail?id=' + that.$route.params.id)
                     .then(function (response) {
                         let data = response.data;
                         if (data.code === 200) {
@@ -106,6 +106,8 @@
                     arName: track.ar[0].name,
                     musicName: track.name
                 });
+
+                /*在MusicPlayer接收，使音乐停止播放*/
                 this.$eventBus.$emit('changeMusic');
             }
         },

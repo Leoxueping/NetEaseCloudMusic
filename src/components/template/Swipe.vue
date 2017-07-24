@@ -68,7 +68,7 @@
 
         created() {
             const that = this;
-            that.$http.get(baseUrl + '/banner')
+            that.$http.get('/banner')
                     .then(function (response) {
                         let data = response.data;
                         if (data.code === 200) {

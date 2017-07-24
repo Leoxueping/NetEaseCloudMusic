@@ -15,12 +15,14 @@ import fontAwsome from './assets/css/font-awesome.min.css'
 Vue.prototype.$eventBus = new Vue({});
 
 //ajax插件axios
+axios.defaults.baseURL = 'http://119.29.201.53:80'
+// axios.defaults.baseURL = 'http://localhost:3000'
 Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
 
 // window.baseUrl = 'http://119.29.201.53:80'
-window.baseUrl = 'http://localhost:3000'
+// window.baseUrl = 'http://localhost:3000'
 
 /*初始化过滤器*/
 filter(Vue)

@@ -1,8 +1,26 @@
-# neteasycloud
+# NetEaseCloudMusic
 
-> A Vue.js project
+> vue版网易云音乐web app
 
-## Build Setup
+## 接口来自
+[Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+
+## 技术栈
+vue2 + vuex + vue-router + axios
+
+## 运行
+
+### 运行API接口
+
+``` bash
+git clone https://github.com/Binaryify/NeteaseCloudMusicApi
+cd NeteaseCloudMusicApi
+npm install
+node app.js
+```
+### 把`src/main.js`中的 `window.baseUrl` 改成API所监听的端口地址
+
+### 然后运行此项目 
 
 ``` bash
 # install dependencies
@@ -10,7 +28,10 @@ npm install
 
 # serve with hot reload at localhost:8080
 npm run dev
+```
 
+## 打包
+``` bash
 # build for production with minification
 npm run build
 
@@ -18,4 +39,5 @@ npm run build
 npm run build --report
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+
