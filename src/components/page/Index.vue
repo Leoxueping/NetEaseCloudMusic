@@ -76,7 +76,7 @@
         },
 
         activated() {
-            console.log('常见')
+            
             const that = this;
             this.$http.get('/personalized')
                 .then(function (response) {

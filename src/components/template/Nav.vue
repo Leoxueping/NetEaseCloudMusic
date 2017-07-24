@@ -1,16 +1,16 @@
 <template>
     <div>
         <ul>
-            <li class="active">
+            <li class="active ripple-effect" @click="navClicked($event)">
                 <router-link to="/Index">个性推荐</router-link>
             </li>
-            <li>
+            <li class="ripple-effect" @click="navClicked($event)">
                 <router-link to="/PlayList">歌单</router-link>
             </li>
-            <li>
+            <li class="ripple-effect" @click="navClicked($event)">
                 <router-link to="/HostStation">主播电台</router-link>
             </li>
-            <li>
+            <li class="ripple-effect" @click="navClicked($event)">
                 <router-link to="/RankList">排行榜</router-link>
             </li>
         </ul>
@@ -19,7 +19,12 @@
 
 <script>
     export default {
-        name: 'nav'
+        name: 'nav',
+        methods: {
+            navClicked(event) {
+                this.$ripple(event);
+            }
+        }
     }
 </script>
 
@@ -32,7 +37,7 @@
     }
     ul {
         display: flex;
-        box-shadow: 1px 1px 8px #888;
+        /*box-shadow: 1px 1px 8px #888;*/
     }
     li {
         flex: 1;

@@ -1,55 +1,57 @@
 <template>
-    <div class="player-detail-container" v-if="currentMusic">
-        <div class="img-bg" :style="'background-image: url(' + currentMusic.al.picUrl + '); z-index: -1;'"></div>
-        <header class="player-detail-header list-item">
-            <div class="list-item-left">
-               <i style="font-size: 3rem;" class="icon-angle-left"></i> 
-            </div>
-            <div class="list-item-middle">
-                <div class="music-name">
-                    <p>{{track.musicName}}</p>
+    <div>
+        <div  v-if="currentMusic" class="player-detail-container">
+            <div class="img-bg" :style="'background-image: url(' + currentMusic.al.picUrl + '); z-index: -1;'"></div>
+            <header class="player-detail-header list-item">
+                <div class="list-item-left" @click.stop="backToPrev()">
+                   <i style="font-size: 3rem;" class="icon-angle-left"></i> 
                 </div>
-                <div class="desc-text">{{track.arName}}</div>
-            </div>
-            <div class="list-item-right">
-                <i class="icon-share-alt"></i>
-            </div>
-            
-        </header>
-        <section class="player-detail-lyric">
-            <div class="cd-container">
-                <div :class="['cd-ar-picture', { 'not-playing': !playInfo.isPlaying }]">
-                    <img :src="currentMusic.al.picUrl">
-                </div>
-                <div :class="['cd-wrapper', { 'not-playing': !playInfo.isPlaying }]"></div>
-            </div>
-            <div class="current-lyric">{{playInfo.currentLyric}}</div>
-            <div :class="['play-stick', { 'not-playing': !playInfo.isPlaying }]"></div>
-        </section>
-        <section class="player-detail-control">
-            <div class="personal-operation">
-                <i class="icon-heart-empty personal-operation-item"></i>
-                <i class="icon-download-alt personal-operation-item"></i>
-                <i class="icon-comment-alt personal-operation-item"></i>
-                <i class=" icon-list-ul personal-operation-item"></i>
-            </div>
-            <div class="my-progress-bar">
-                <span>{{playInfo.currentTime | time}}</span>
-                <div class="bar-wrapper">
-                    <div class="outer-bar">
-                        <div class="inner-bar" :style="{width: playInfo.percent * 100 + '%'}"></div>
+                <div class="list-item-middle">
+                    <div class="music-name">
+                        <p>{{track.musicName}}</p>
                     </div>
+                    <div class="desc-text">{{track.arName}}</div>
                 </div>
-                <span>{{playInfo.totalTime | time}}</span>
-            </div>
-            <div class="play-control">
-                <i class="play-control-item icon-refresh"></i>
-                <i class="play-control-item icon-step-backward" @click="playPrev"></i>
-                <i :class="['play-control-item', playInfo.isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
-                <i class="play-control-item icon-step-forward" @click.stop="playNext"></i>
-                <i class="play-control-item icon-indent-right"></i>
-            </div>
-        </section>
+                <div class="list-item-right">
+                    <i class="icon-share-alt"></i>
+                </div>
+                
+            </header>
+            <section class="player-detail-lyric">
+                <div class="cd-container">
+                    <div :class="['cd-ar-picture', { 'not-playing': !playInfo.isPlaying }]">
+                        <img :src="currentMusic.al.picUrl">
+                    </div>
+                    <div :class="['cd-wrapper', { 'not-playing': !playInfo.isPlaying }]"></div>
+                </div>
+                <div class="current-lyric">{{playInfo.currentLyric}}</div>
+                <div :class="['play-stick', { 'not-playing': !playInfo.isPlaying }]"></div>
+            </section>
+            <section class="player-detail-control">
+                <div class="personal-operation">
+                    <i class="icon-heart-empty personal-operation-item"></i>
+                    <i class="icon-download-alt personal-operation-item"></i>
+                    <i class="icon-comment-alt personal-operation-item"></i>
+                    <i class=" icon-list-ul personal-operation-item"></i>
+                </div>
+                <div class="my-progress-bar">
+                    <span>{{playInfo.currentTime | time}}</span>
+                    <div class="bar-wrapper">
+                        <div class="outer-bar">
+                            <div class="inner-bar" :style="{width: playInfo.percent * 100 + '%'}"></div>
+                        </div>
+                    </div>
+                    <span>{{playInfo.totalTime | time}}</span>
+                </div>
+                <div class="play-control">
+                    <i class="play-control-item icon-refresh"></i>
+                    <i class="play-control-item icon-step-backward" @click="playPrev"></i>
+                    <i :class="['play-control-item', playInfo.isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
+                    <i class="play-control-item icon-step-forward" @click.stop="playNext"></i>
+                    <i class="play-control-item icon-indent-right"></i>
+                </div>
+            </section>
+        </div>
     </div>
 </template>
 
@@ -69,10 +71,14 @@
         },
         created() {
             // this.$http()
-            if (!this.currentMusic) {
-                this.$router.replace({ name: 'Index' })
-            }
+            
+            
+        },
+        activated() {
             this.$store.commit('hideThePlayer');
+            if (!this.track.id) {
+                this.$router.replace({ name: 'Index', params: { refresh: true }})
+            }
         },
         computed: {
             ...mapState({
@@ -93,7 +99,10 @@
             ...mapActions([
                 'playNext',
                 'playPrev'
-            ])
+            ]),
+            backToPrev() {
+                this.$router.go(-1);
+            }
         }
     }
     

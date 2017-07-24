@@ -115,7 +115,7 @@
 
                 const playList = this.$store.state.player.playList;
 
-                if (!playList || playlist.tracks[0].id !== this.playlist.tracks[0].id) {
+                if (!playList || playList.tracks[0].id !== this.playlist.tracks[0].id) {
                     this.$store.commit('replacePlayList', {
                         playList: that.playlist
                     })

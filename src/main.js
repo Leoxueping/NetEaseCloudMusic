@@ -6,6 +6,7 @@ import router from './router'
 import axios from 'axios'
 import store from './store'
 import filter from './filter/index.js'
+import ripple from './util/ripple.js'
 
 /*全局css*/
 import style from './assets/css/style.css'
@@ -15,9 +16,12 @@ import fontAwsome from './assets/css/font-awesome.min.css'
 Vue.prototype.$eventBus = new Vue({});
 
 //ajax插件axios
-// axios.defaults.baseURL = 'http://119.29.201.53:80'
-axios.defaults.baseURL = 'http://localhost:3000'
+axios.defaults.baseURL = 'http://119.29.201.53:80'
+// axios.defaults.baseURL = 'http://localhost:3000'
 Vue.prototype.$http = axios
+
+/*点击水波纹效果实现函数*/
+Vue.prototype.$ripple = ripple
 
 Vue.config.productionTip = false
 

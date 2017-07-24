@@ -93,8 +93,8 @@
         },
 
         deactivated() {
-            const that = this;
-            clearInterval(that.bannerInterval);
+            // const that = this;
+            // clearInterval(that.bannerInterval);
 
         }
     }
