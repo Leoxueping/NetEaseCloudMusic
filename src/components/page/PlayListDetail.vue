@@ -80,32 +80,46 @@
         },
 
         created() {
+            
+        },
+
+        activated() {
             const that = this;
             this.id = this.$route.params.id;
             this.$http.get('/playlist/detail?id=' + that.$route.params.id)
-                    .then(function (response) {
-                        let data = response.data;
-                        if (data.code === 200) {
-                            that.playlist = data.playlist;
-                            that.creator = data.playlist.creator;
-                            console.log(data)
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                        alert('服务器错误!')
-                    });
+                .then(function (response) {
+                    let data = response.data;
+                    if (data.code === 200) {
+                        that.playlist = data.playlist;
+                        that.creator = data.playlist.creator;
+                        console.log(data)
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error)
+                    alert('服务器错误!')
+                });
         },
 
         methods: {
             changeMusic(index) {
                 const track = this.playlist.tracks[index];
-                
+                const that = this;
+
                 this.$store.dispatch('changeMusic', {
                     id: track.id,
                     arName: track.ar[0].name,
-                    musicName: track.name
+                    musicName: track.name,
+                    showThePlayer: true
                 });
+
+                const playList = this.$store.state.player.playList;
+
+                if (!playList || playlist.tracks[0].id !== this.playlist.tracks[0].id) {
+                    this.$store.commit('replacePlayList', {
+                        playList: that.playlist
+                    })
+                }
 
                 /*在MusicPlayer接收，使音乐停止播放*/
                 this.$eventBus.$emit('changeMusic');

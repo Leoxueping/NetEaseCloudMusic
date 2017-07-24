@@ -1,5 +1,5 @@
 <template>
-    <div class="player-detail-container">
+    <div class="player-detail-container" v-if="currentMusic">
         <div class="img-bg" :style="'background-image: url(' + currentMusic.al.picUrl + '); z-index: -1;'"></div>
         <header class="player-detail-header list-item">
             <div class="list-item-left">
@@ -23,7 +23,7 @@
                 </div>
                 <div :class="['cd-wrapper', { 'not-playing': !playInfo.isPlaying }]"></div>
             </div>
-            <div class="current-lyric">我就是歌词啊歌词啊歌词啊歌词啊歌词啊 啊</div>
+            <div class="current-lyric">{{playInfo.currentLyric}}</div>
             <div :class="['play-stick', { 'not-playing': !playInfo.isPlaying }]"></div>
         </section>
         <section class="player-detail-control">
@@ -44,9 +44,9 @@
             </div>
             <div class="play-control">
                 <i class="play-control-item icon-refresh"></i>
-                <i class="play-control-item icon-step-backward"></i>
+                <i class="play-control-item icon-step-backward" @click="playPrev"></i>
                 <i :class="['play-control-item', playInfo.isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
-                <i class="play-control-item icon-step-forward"></i>
+                <i class="play-control-item icon-step-forward" @click.stop="playNext"></i>
                 <i class="play-control-item icon-indent-right"></i>
             </div>
         </section>
@@ -55,7 +55,7 @@
 
 <script>
 
-    import { mapState } from 'vuex'
+    import { mapState, mapActions } from 'vuex'
 
     export default {
         name: 'musicPlayerDetail',
@@ -69,6 +69,9 @@
         },
         created() {
             // this.$http()
+            if (!this.currentMusic) {
+                this.$router.replace({ name: 'Index' })
+            }
             this.$store.commit('hideThePlayer');
         },
         computed: {
@@ -79,13 +82,18 @@
                 showThePlayer: state => state.player.showThePlayer,
                 track: state => state.player.track,
                 lyric: state => state.player.lyric,
-                klyric: state => state.player.klyric
+                klyric: state => state.player.klyric,
+                playList: state => state.player.playList
             })
         },
         methods: {
             playOrPause() {
                 this.$eventBus.$emit('playOrPause');
-            }
+            },
+            ...mapActions([
+                'playNext',
+                'playPrev'
+            ])
         }
     }
     

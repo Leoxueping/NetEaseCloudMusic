@@ -1,13 +1,19 @@
 <template>
     <div id="app">
         <transition :name="transitionName" mode="out-in">
-            <router-view name="header"></router-view>
+            <keep-alive>
+                <router-view name="header"></router-view>
+            </keep-alive>
         </transition>
         <transition :name="transitionName" mode="out-in">
-            <router-view name="nav"></router-view>
+            <keep-alive>
+                <router-view name="nav"></router-view>
+            </keep-alive>
         </transition>
         <transition :name="transitionName" mode="out-in">
-            <router-view></router-view>
+            <keep-alive>
+                <router-view></router-view>
+            </keep-alive>
         </transition>
         <music-player></music-player>
     </div>

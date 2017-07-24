@@ -1,6 +1,6 @@
 <template>
     <transition name="slide-up">
-        <div class="music-player" v-show="showThePlayer">
+        <div class="music-player" v-show="playInfo.showThePlayer">
 
             <router-link class="music-player-header" :to="{ name: 'MusicPlayerDetail', params: { id: track.id }}">
                 <img class="al-picture" :src="currentMusic && currentMusic.al.picUrl">
@@ -11,7 +11,7 @@
 
             <router-link class="music-player-name" :to="{ name: 'MusicPlayerDetail', params: { id: track.id }}">
                 <div class="music-name">{{track.musicName}}</div>
-                <div class="desc-text ar-name">{{track.arName}}</div>
+                <div class="desc-text ar-name">{{playInfo.currentLyric}}</div>
             </router-link>
 
             <div class="music-player-controller">
@@ -29,9 +29,7 @@
                 </div>
             </div>
 
-            <div>{{test}}</div>
-
-            <audio @canplay.self="bufferEnded" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url"></audio>
+            <audio @timeupdate="timeUpdate" @canplay.self="bufferEnded" @loadstart="loadStart" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url"></audio>
 
         </div>
     </transition>
@@ -48,13 +46,6 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                 
             }
         },
-        props: {
-            test: {
-                default() {
-                    return 'sdsfds'
-                }
-            }
-        }
         components: {
             
         },
@@ -63,10 +54,10 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                 currentMusic: state => state.player.currentMusic,
                 playInfo: state => state.player.playInfo,
                 isLoadingMusic: state => state.player.isLoadingMusic,
-                showThePlayer: state => state.player.showThePlayer,
                 track: state => state.player.track,
                 lyric: state => state.player.lyric,
-                klyric: state => state.player.klyric
+                klyric: state => state.player.klyric,
+                playList: state => state.player.playList
             })
             // currentMusic() { return this.$store.state.player.currentMusic }
         },
@@ -77,10 +68,9 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
             // this.$store.dispatch('playThisMusic', {
             //     id: 95447
             // })
-            const that = this;
-            this.$eventBus.$on('playOrPause', () => {
-                that.playOrPause();
-            })
+            // this.$store.dispatch('getLyric');
+            let that = this;
+            this.$eventBus.$on('playOrPause', that.playOrPause);
 
         },
         mounted() {
@@ -114,32 +104,9 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                     theAudio.pause();
                     that.$store.commit('pausePlay');
                 }else {
-                    interval = setInterval(() => {
-
-                        let rightcircle = that.$refs.rightCircle,
-                            leftcircle = that.$refs.leftCircle,
-                            percent = theAudio.currentTime / theAudio.duration;
-
-                        if(isNaN(percent)) return;
-                        console.log(theAudio.currentTime)
-                        if(percent <= 0.5){
-                            rightcircle.style.cssText = "transform: rotate("+ (-135 + 360 * percent) +"deg)";
-                            leftcircle.style.cssText = "transform: rotate(-134deg)";
-                        }else{
-                            rightcircle.style.cssText = "transform: rotate(45deg)";
-                            leftcircle.style.cssText = "transform: rotate("+ (-135 + 360 * (percent - 0.5)) +"deg)";
-                        }
-
-                        that.$store.commit('setThePlayInfo', { currentTime: theAudio.currentTime, percent });
-
-                        if (theAudio.ended) {
-                            that.$store.commit('playEnded');
-                        }
-
-                    }, 1000);
                     theAudio.play();
+                    // theAudio.currentTime = 160
                     that.$store.commit('beginPlay', {
-                        playInterval: interval,
                         totalTime: theAudio.duration
                     });
                 }
@@ -150,6 +117,49 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                 console.log('缓存完成')
 
                 this.playOrPause(true);
+            },
+
+            loadStart() {
+                console.log('开始缓存')
+            },
+
+            timeUpdate() {
+                /*同步歌词*/
+                let theAudio = this.$refs.musicPlayerAudio,
+                    lyric = this.lyric,
+                    currentLyric;
+                for(let i = 0, len = lyric.length; i < len; i ++) {
+                    if (theAudio.currentTime <= lyric[i][0]) {
+                        if (i === 0) {
+                            currentLyric = lyric[0][1]
+                        }else {
+                            currentLyric = lyric[i - 1][1]
+                        }
+                        
+                        break;
+                    }
+                }
+
+                /*同步时间等其他状态*/
+                let rightcircle = this.$refs.rightCircle,
+                    leftcircle = this.$refs.leftCircle,
+                    percent = theAudio.currentTime / theAudio.duration;
+
+                if(isNaN(percent)) return;
+                
+                if(percent <= 0.5){
+                    rightcircle.style.cssText = "transform: rotate("+ (-135 + 360 * percent) +"deg)";
+                    leftcircle.style.cssText = "transform: rotate(-134deg)";
+                }else{
+                    rightcircle.style.cssText = "transform: rotate(45deg)";
+                    leftcircle.style.cssText = "transform: rotate("+ (-135 + 360 * (percent - 0.5)) +"deg)";
+                }
+
+                this.$store.commit('setThePlayInfo', { currentTime: theAudio.currentTime, percent, currentLyric });
+
+                if (theAudio.ended) {
+                    this.$store.dispatch('playEnded');
+                }
             }
 
             // changeMusic(track) {

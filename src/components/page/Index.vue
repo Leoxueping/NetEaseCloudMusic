@@ -50,12 +50,13 @@
             </div>
         </div>
         <!-- <music-player></music-player> -->
-
+        <alert-info ref="alertInfo"></alert-info>
     </div>
         
 </template>
 
 <script>
+    import AlertInfo from '../template/AlertInfo.vue'
     import Swipe from '../template/Swipe.vue'
     // import MusicPlayer from '../template/MusicPlayer.vue'
     export default {
@@ -68,20 +69,28 @@
         },
         components: {
             Swipe,
+            AlertInfo
         },
         created() {
+
+        },
+
+        activated() {
+            console.log('常见')
             const that = this;
             this.$http.get('/personalized')
-                    .then(function (response) {
-                        let data = response.data;
-                        if (data.code === 200) {
-                            that.musices = data.result;
-                        }
-                    })
-                    .catch(function (error) {
-                        // alert('服务器错误!')
-                        console.error('服务器错误', error)
-                    });
+                .then(function (response) {
+                    let data = response.data;
+                    if (data.code === 200) {
+                        that.musices = data.result;
+                    }
+                })
+                .catch(function (error) {
+                    // alert('服务器错误!')
+                    that.$refs.alertInfo.showMsg('服务器错误');
+                    
+                    // console.error('服务器错误', error)
+                });
         },
 
         methods: {

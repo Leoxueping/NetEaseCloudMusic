@@ -5,10 +5,14 @@
                 <img :src="item.pic">
             </li>
         </ul>
+        <alert-info ref="alertInfo"></alert-info>
     </div>
 </template>
 
 <script>
+
+    import AlertInfo from '../template/AlertInfo.vue'
+
     export default {
         name: 'swipe',
         data() {
@@ -18,6 +22,10 @@
                 current: 0,
                 bannerInterval: ''
             }
+        },
+
+        components: {
+            AlertInfo
         },
 
         mounted() {
@@ -32,7 +40,7 @@
                     }
                     let width = items[0].offsetWidth;
                     
-                    items[that.current].style['z-index'] = 65535;
+                    items[that.current].style['z-index'] = 200;
                     items[that.current + 1].style.transform = 'translateX('+ width +'px)';
 
                     that.bannerInterval = setInterval(function () {
@@ -55,11 +63,11 @@
                 let width = items[0].offsetWidth,
                     length = that.banners.length;
                 // console.log(width)
-                items[that.current].style['z-index'] = 65535;
+                items[that.current].style['z-index'] = 200;
                 items[that.current].style.transform = 'translateX(-'+ width +'px)';
                 // console.log(that.$refs.swipeItem[that.current])
                 that.current = (that.current + 1) % length;
-                items[that.current].style['z-index'] = 65535;
+                items[that.current].style['z-index'] = 200;
                 items[that.current].style.transform = 'translateX(0)';
                 items[(that.current + 1) % length].style['z-index'] = -1;
                 items[(that.current + 1) % length].style.transform = 'translateX('+ width +'px)';
@@ -67,22 +75,25 @@
         },
 
         created() {
+            
+        },
+
+        activated() {
             const that = this;
             that.$http.get('/banner')
-                    .then(function (response) {
-                        let data = response.data;
-                        if (data.code === 200) {
-                            that.banners = data.banners
-                        }
-                    })
-                    .catch(function (error) {
-                        alert('服务器错误!')
-                    });
+                .then(function (response) {
+                    let data = response.data;
+                    if (data.code === 200) {
+                        that.banners = data.banners
+                    }
+                })
+                .catch(function (error) {
+                    that.$refs.alertInfo.showMsg('服务器错误');
+                });
         },
 
         deactivated() {
             const that = this;
-            alert(0)
             clearInterval(that.bannerInterval);
 
         }

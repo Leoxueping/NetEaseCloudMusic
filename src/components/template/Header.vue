@@ -24,6 +24,7 @@ export default {
         border-radius: 5px;
         flex: 5;
         padding-left: 40px;
+        outline: none;
     }
 
     header>div {

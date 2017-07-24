@@ -18,7 +18,7 @@ cd NeteaseCloudMusicApi
 npm install
 node app.js
 ```
-### 把`src/main.js`中的 `window.baseUrl` 改成API所监听的端口地址
+### 把`src/main.js`中的 `axios.defaults.baseURL` 改成API所监听的端口地址
 
 ### 然后运行此项目 
 

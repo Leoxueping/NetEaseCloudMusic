@@ -355,3 +355,18 @@ a:hover, a:focus {
   transform: translateY(100vh);
   opacity: 0;
 }
+
+.fade-in-enter-active {
+  transition: all .3s ease;
+}
+.fade-in-leave-active {
+  transition: all .3s ease;
+}
+.fade-in-enter
+/* .slide-fade-leave-active for <2.1.8 */ {
+  opacity: 0;
+}
+.fade-in-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  opacity: 0;
+}

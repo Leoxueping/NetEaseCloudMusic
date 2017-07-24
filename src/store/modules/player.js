@@ -6,14 +6,15 @@ const state = {
         isPlaying: false,
         currentTime: 0,
         totalTime: 0,
-        playInterval: null,
+        // playInterval: null,
         currentLyric: '暂无歌词',
-        percent: 0
+        percent: 0,
+        showThePlayer: false
     },
-    playList: [],
+    playList: null,
 
     isLoadingMusic: true,
-    showThePlayer: false,
+    // showThePlayer: false,
     track: {/*这是切换音乐的时候立即获得获得的数据，不需要ajax请求的*/
         id: '',
         arName: '',
@@ -61,6 +62,44 @@ const actions = {
             });
        
         
+    },
+
+    playEnded({ state, commit, dispatch }) {
+        dispatch('playNext');
+    },
+
+    playNext({ state, commit, dispatch }) {
+        commit('playEnded');
+        const tracks = state.playList.tracks;
+        for(let i = 0, len = tracks.length; i < len; i ++) {
+            if (tracks[i].id === state.track.id) {
+                let next = (i === len - 1) ? 0 : i + 1;
+                dispatch('changeMusic', {
+                    id: tracks[next].id,
+                    arName: tracks[next].ar[0].name,
+                    musicName: tracks[next].name,
+                    showThePlayer: false
+                })
+                break;
+            }
+        }
+    },
+
+    playPrev({ state, commit, dispatch }) {
+        commit('playEnded');
+        const tracks = state.playList.tracks;
+        for(let i = 0, len = tracks.length; i < len; i ++) {
+            if (tracks[i].id === state.track.id) {
+                let next = (i === 0) ? len - 1 : i - 1;
+                dispatch('changeMusic', {
+                    id: tracks[next].id,
+                    arName: tracks[next].ar[0].name,
+                    musicName: tracks[next].name,
+                    showThePlayer: false
+                })
+                break;
+            }
+        }
     }
 }
 
@@ -69,81 +108,85 @@ const mutations = {
         state.currentMusic = currentMusic;
         // state.showThePlayer = true;
     },
-    beginPlay(state, { playInterval, totalTime }) {
+    beginPlay(state, { totalTime }) {
         const playInfo = state.playInfo;
         playInfo.isPlaying = true;
-        playInfo.playInterval = playInterval;
+        // playInfo.playInterval = playInterval;
         state.isLoadingMusic = false;
         state.playInfo.totalTime = totalTime;
     },
     pausePlay(state) {
-        clearInterval(state.playInfo.playInterval);
-        state.playInfo.playInterval = null;
+        // clearInterval(state.playInfo.playInterval);
+        // state.playInfo.playInterval = null;
         state.playInfo.isPlaying = false;
     },
     playEnded(state) {
-        clearInterval(state.playInfo.playInterval);
-        state.playInfo.playInterval = null;
+        // clearInterval(state.playInfo.playInterval);
+        // state.playInfo.playInterval = null;
         state.playInfo.isPlaying = false;
+
     },
-    changeMusicTrack(state, payload) {
+    changeMusicTrack(state, { id, arName, musicName, showThePlayer }) {
         // let theAudio = this.$refs.musicPlayerAudio;
         // if (this.playInfo.isPlaying) {
         //     this.playOrPause();    
         // }
         state.playInfo.isPlaying = false;
-        state.track = payload;
-        state.showThePlayer = true;
+        state.playInfo.showThePlayer = showThePlayer;
+        state.track = { id, arName, musicName };
+        // state.showThePlayer = true;
         state.isLoadingMusic = true;
     },
 
     setLyric(state, payload) {
 
-        /*把歌词格式化进一个对象里面*/
-        // let lrcs1 = payload.lrc.lyric.split(']');
-        // let lrcs = lrcs1.map(item => {
-        //     let items = item.split('[');
-        //     return items.filter(itemItem => (itemItem.replace(/(^\s*)|(\s*$)/g, "") !== ''))
-        //     // return item.split('[');
-        // })
         
-        // lrcs = lrcs.reduce((prev, curr) => prev.concat(curr));
-        // console.log(lrcs)
-        // let lyric = {};
-        // const timeToSecond = time => {
-        //     time = time.slice(0, 5);
-        //     time = time.split(':');
-        //     return parseInt(time[0]) * 60 + parseInt(time[1]) + '';
-        // } 
-        // if (lrcs[0].indexOf('00:00') !== -1) {
-        //     lrcs.forEach((item, index) => {
-        //         if(index % 2 === 0) {
-        //             lyric[timeToSecond(item)] = lrcs[index + 1];
-        //         }
-        //     })
-        // }else {
-        //     lyric['0'] = lrcs[0];
-        //     lrcs.forEach((item, index) => {
-        //         if(index % 2 !== 0) {
-        //             lyric[timeToSecond(item)] = lrcs[index + 1];
-        //         }
-        //     })
-        // }
-        let lyric = payload.lrc.lyric.split(String.fromCharCode(10));
+        let lyric = payload.lrc.lyric,
+            lines = lyric.split('\n'),  
+            pattern = /\[\d{2}:\d{2}.\d{2,3}\]/g,
+            result = [];
 
-        console.log(lyric)
+        while (!pattern.test(lines[0])) {/*去掉不含时间的行*/
+            lines = lines.slice(1);
+        };
+        lines.pop();
+        lines.forEach(item => {
+            let time = item.match(pattern),
+                value = item.replace(pattern, '');
+            time.forEach(item => {
+                let timeVals = item.slice(1, -1).split(':');
+                result.push([parseInt(timeVals[0]) * 60 + parseFloat(timeVals[1]), value]);
+            })
+        })
+
+        result.sort((prev, next) => {
+            return prev[0] - next[0];
+        })
+
+        // console.log(result)
+        // console.log(lines)
         
-        state.lyric = payload.lrc;
+        state.lyric = result;
         state.klyric = payload.klyric;
     },
 
     hideThePlayer(state) {
-        state.showThePlayer = false;
+        state.playInfo.showThePlayer = false;
     },
 
-    setThePlayInfo(state, { currentTime, percent }) {
+    setThePlayInfo(state, { currentTime, percent, currentLyric }) {
         state.playInfo.currentTime = currentTime;
         state.playInfo.percent = percent;
+        state.playInfo.currentLyric = currentLyric;
+    },
+
+    updateCurrentLyric(state, { currentLyric }) {
+        state.playInfo.currentLyric = currentLyric;
+    },
+
+    replacePlayList(state, { playList }) {
+        state.playList = playList;
+        console.log(playList)
     }
 }
 
