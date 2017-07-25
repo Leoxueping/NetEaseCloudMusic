@@ -49,7 +49,7 @@ const actions = {
         axios.all([getDetail(), getURL(), getLyric()])
             .then(axios.spread((detail, theUrl, lyric) => {
                 let currentMusic = null;
-                console.log(detail, theUrl, lyric)
+                // console.log(detail, theUrl, lyric)
                 currentMusic = detail.data.songs[0];
                 currentMusic.urlInfo = theUrl.data.data[0];
                 commit('changeMusic', {
@@ -61,7 +61,16 @@ const actions = {
                 console.error(error)
             });
        
-        
+        // axios.get('/song/detail?ids=' + id)
+        // .then((res) => {
+        //     console.log(res)
+        //     return axios.get('/music/url?id=' + id);;
+        // }).then(res => {
+        //     console.log(res);
+        //     return axios.get('/lyric?id=' + id);
+        // }).then(res => {
+        //     console.log(res)
+        // })
     },
 
     playEnded({ state, commit, dispatch }) {
@@ -143,13 +152,14 @@ const mutations = {
         
         let lyric = payload.lrc.lyric,
             lines = lyric.split('\n'),  
-            pattern = /\[\d{2}:\d{2}.\d{2,3}\]/g,
+            pattern = /\[\d{2}:\d{2}.\d{1,3}\]/g,
             result = [];
-
+        
+        lines.pop();
         while (!pattern.test(lines[0])) {/*去掉不含时间的行*/
             lines = lines.slice(1);
         };
-        lines.pop();
+        
         lines.forEach(item => {
             let time = item.match(pattern),
                 value = item.replace(pattern, '');

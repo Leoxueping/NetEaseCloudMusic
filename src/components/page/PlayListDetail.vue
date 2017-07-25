@@ -92,7 +92,7 @@
                     if (data.code === 200) {
                         that.playlist = data.playlist;
                         that.creator = data.playlist.creator;
-                        console.log(data)
+                        // console.log(data)
                     }
                 })
                 .catch(function (error) {

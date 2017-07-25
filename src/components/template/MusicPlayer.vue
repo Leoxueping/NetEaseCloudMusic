@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <audio @timeupdate="timeUpdate" @canplay.self="bufferEnded" @loadstart="loadStart" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url"></audio>
+            <audio @timeupdate="timeUpdate" @canplay.self="bufferEnded" @loadstart="loadStart" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url" @ended="playEnded"></audio>
 
         </div>
     </transition>
@@ -95,12 +95,12 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
             ...mapMutations([
                 
             ]),
-            playOrPause(toPlay) {
+            playOrPause() {
                 let theAudio = this.$refs.musicPlayerAudio;
 
                 let interval = null;
                 const that = this;
-                if (this.playInfo.isPlaying && (!toPlay || typeof toPlay === 'object')) {
+                if (this.playInfo.isPlaying) {
                     theAudio.pause();
                     that.$store.commit('pausePlay');
                 }else {
@@ -109,6 +109,7 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                     that.$store.commit('beginPlay', {
                         totalTime: theAudio.duration
                     });
+                    console.log('开始播放', theAudio.duration)
                 }
                 
             },
@@ -116,7 +117,7 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
             bufferEnded() {
                 console.log('缓存完成')
 
-                this.playOrPause(true);
+                this.playOrPause();
             },
 
             loadStart() {
@@ -157,9 +158,13 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
 
                 this.$store.commit('setThePlayInfo', { currentTime: theAudio.currentTime, percent, currentLyric });
 
-                if (theAudio.ended) {
-                    this.$store.dispatch('playEnded');
-                }
+                // if (theAudio.ended) {
+                    
+                // }
+            },
+
+            playEnded() {
+                this.$store.dispatch('playEnded');
             }
 
             // changeMusic(track) {

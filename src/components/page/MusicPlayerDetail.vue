@@ -204,7 +204,7 @@
     }
     .cd-ar-picture {
         width: 100%;
-        animation: cd_rotate 5s linear infinite;
+        animation: cd_rotate 10s linear infinite;
     }
     .cd-ar-picture img {
         width: 100%;
@@ -221,7 +221,7 @@
         width: 100%;
         background-color: rgba(107, 107, 107, 0.298);
         border-radius: 50%;
-        animation: cd_rotate 3s linear infinite;
+        animation: cd_rotate 10s linear infinite;
     }
     .cd-wrapper.not-playing, .cd-ar-picture.not-playing {
         animation-play-state: paused;
