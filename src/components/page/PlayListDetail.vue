@@ -50,9 +50,9 @@
                     <i style="font-size: 20px;" class="icon-indent-right"></i>
                 </div>
             </div>
-            <div v-if="!playlist.tracks" style="height: calc(100vh - 282px);">
+            <!-- <div v-if="!playlist.tracks" style="height: calc(100vh - 282px);"> -->
                 <loading></loading>
-            </div>
+            <!-- </div> -->
         </div>
     </transition>
 </template>

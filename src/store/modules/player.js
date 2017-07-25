@@ -117,12 +117,12 @@ const mutations = {
         state.currentMusic = currentMusic;
         // state.showThePlayer = true;
     },
-    beginPlay(state, { totalTime }) {
+    beginPlay(state) {
         const playInfo = state.playInfo;
         playInfo.isPlaying = true;
         // playInfo.playInterval = playInterval;
         state.isLoadingMusic = false;
-        state.playInfo.totalTime = totalTime;
+        // state.playInfo.totalTime = totalTime;
     },
     pausePlay(state) {
         // clearInterval(state.playInfo.playInterval);
@@ -133,6 +133,8 @@ const mutations = {
         // clearInterval(state.playInfo.playInterval);
         // state.playInfo.playInterval = null;
         state.playInfo.isPlaying = false;
+        state.playInfo.currentTime = 0;
+        state.playInfo.percent = 0;
 
     },
     changeMusicTrack(state, { id, arName, musicName, showThePlayer }) {
@@ -197,6 +199,10 @@ const mutations = {
     replacePlayList(state, { playList }) {
         state.playList = playList;
         console.log(playList)
+    },
+
+    setTotalTime(state, { totalTime }) {
+        state.playInfo.totalTime = totalTime;
     }
 }
 

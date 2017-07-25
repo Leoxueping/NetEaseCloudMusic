@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <audio @timeupdate="timeUpdate" @canplay.self="bufferEnded" @loadstart="loadStart" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url" @ended="playEnded"></audio>
+            <audio @timeupdate="timeUpdate" @canplay.self="bufferEnded" @loadstart="loadStart" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url" @ended="playEnded" @durationchange="durationChange($event)"></audio>
 
         </div>
     </transition>
@@ -106,9 +106,7 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                 }else {
                     theAudio.play();
                     // theAudio.currentTime = 160
-                    that.$store.commit('beginPlay', {
-                        totalTime: theAudio.duration
-                    });
+                    that.$store.commit('beginPlay');
                     console.log('开始播放', theAudio.duration)
                 }
                 
@@ -165,6 +163,15 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
 
             playEnded() {
                 this.$store.dispatch('playEnded');
+            },
+
+            durationChange(event) {
+                let totalTime = event.target.duration;
+                if (totalTime) {
+                    this.$store.commit('setTotalTime', {
+                        totalTime
+                    })
+                }
             }
 
             // changeMusic(track) {
