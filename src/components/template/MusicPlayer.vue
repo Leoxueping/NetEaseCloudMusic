@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <audio @timeupdate="timeUpdate" @canplay.self="bufferEnded" @loadstart="loadStart" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url" @ended="playEnded" @durationchange="durationChange($event)"></audio>
+            <audio @timeupdate="timeUpdate" @canplay.self="bufferEnded" @loadstart="loadStart" ref="musicPlayerAudio" :src="currentMusic && currentMusic.urlInfo.url" @ended="playEnded" @durationchange="durationChange($event)" @seeked="timeSeeked" @play="musicPlay" @pause="musicPause" @playing="musicPlaying" @progress="musicProgress" @error="musicError" @stalled="musicStalled" @suspend="musicSuspend" @loadeddata="loadedData" loadedmetadata="loadedMetadata"></audio>
 
         </div>
     </transition>
@@ -57,7 +57,8 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                 track: state => state.player.track,
                 lyric: state => state.player.lyric,
                 klyric: state => state.player.klyric,
-                playList: state => state.player.playList
+                playList: state => state.player.playList,
+                isLoadingUrl: state => state.player.isLoadingUrl
             })
             // currentMusic() { return this.$store.state.player.currentMusic }
         },
@@ -71,6 +72,7 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
             // this.$store.dispatch('getLyric');
             let that = this;
             this.$eventBus.$on('playOrPause', that.playOrPause);
+            this.$eventBus.$on('adjustTime', that.adjustTime);
 
         },
         mounted() {
@@ -91,31 +93,81 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
             // console.log(that.$refs.musicPlayerAudio.duration)
             
         },
+        watch: {
+            isLoadingMusic() {
+                console.log('bainnfd')
+            }
+        },
         methods: {
             ...mapMutations([
                 
-            ]),
+            ]), 
             playOrPause() {
                 let theAudio = this.$refs.musicPlayerAudio;
 
-                let interval = null;
-                const that = this;
                 if (this.playInfo.isPlaying) {
                     theAudio.pause();
-                    that.$store.commit('pausePlay');
                 }else {
                     theAudio.play();
-                    // theAudio.currentTime = 160
-                    that.$store.commit('beginPlay');
-                    console.log('开始播放', theAudio.duration)
                 }
                 
+            },
+
+            musicPlaying() {
+                console.log('playing事件')
+                this.$store.commit('setLoadingUrl', {
+                    isLoadingUrl: true
+                })
+            },
+
+            musicProgress() {
+                console.log('progress事件')
+            },
+
+            musicError() {
+                console.log('error事件')
+            },
+
+            musicStalled() {
+                console.log('stalled事件')
+            },
+
+            musicSuspend() {
+                console.log('suspend事件')
+            },
+
+            loadedData() {
+                console.log('loadedData事件')
+            },
+
+            loadedMetadata() {
+                console.log('loadedMetadata事件')
+            },
+
+            musicPlay() {
+                this.$store.commit('beginPlay');
+                this.$store.commit('setLoadingUrl', {
+                    isLoadingUrl: false
+                })
+            },
+
+            musicPause() {
+                this.$store.commit('pausePlay');
+                this.$store.commit('setLoadingUrl', {
+                    isLoadingUrl: false
+                })
             },
 
             bufferEnded() {
                 console.log('缓存完成')
 
-                this.playOrPause();
+                let theAudio = this.$refs.musicPlayerAudio;
+                if(theAudio.paused) {
+                    theAudio.play();
+                }
+                this.$store.commit('setLoadingUrl', {
+                    isLoadingUrl: false
+                })
             },
 
             loadStart() {
@@ -127,17 +179,22 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                 let theAudio = this.$refs.musicPlayerAudio,
                     lyric = this.lyric,
                     currentLyric;
-                for(let i = 0, len = lyric.length; i < len; i ++) {
-                    if (theAudio.currentTime <= lyric[i][0]) {
-                        if (i === 0) {
-                            currentLyric = lyric[0][1]
-                        }else {
-                            currentLyric = lyric[i - 1][1]
+                if(this.lyric) {
+                    for(let i = 0, len = lyric.length; i < len; i ++) {
+                        if (theAudio.currentTime <= lyric[i][0]) {
+                            if (i === 0) {
+                                currentLyric = lyric[0][1]
+                            }else {
+                                currentLyric = lyric[i - 1][1]
+                            }
+                            
+                            break;
                         }
-                        
-                        break;
                     }
+                }else {
+                    currentLyric = '暂无歌词';
                 }
+                
 
                 /*同步时间等其他状态*/
                 let rightcircle = this.$refs.rightCircle,
@@ -155,7 +212,9 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                 }
 
                 this.$store.commit('setThePlayInfo', { currentTime: theAudio.currentTime, percent, currentLyric });
-
+                this.$store.commit('setLoadingUrl', {
+                    isLoadingUrl: false
+                })
                 // if (theAudio.ended) {
                     
                 // }
@@ -172,6 +231,19 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
                         totalTime
                     })
                 }
+            },
+
+            adjustTime(currentTime) {
+                const theAudio = this.$refs.musicPlayerAudio;
+                theAudio.currentTime = currentTime;
+                theAudio.play();
+                // console.log(currentTime, )
+            },
+
+            timeSeeked() {
+                this.$store.commit('adjustTime', {
+                    currentTime: this.$refs.musicPlayerAudio.currentTime
+                })
             }
 
             // changeMusic(track) {

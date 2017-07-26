@@ -54,6 +54,11 @@
                     this.transitionName = order[to.name] > order[from.name] ? 'slide-left' : 'slide-right';
                 }
 
+                /*从播放器界面出来时显示底部小播放器*/
+                if (from.name === "MusicPlayerDetail") {
+                    this.$store.commit("showThePlayer");
+                }
+
             }
         }
     }

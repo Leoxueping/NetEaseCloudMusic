@@ -1,73 +1,88 @@
 <template>
     <div>
-        <div  v-if="currentMusic" class="player-detail-container">
-            <div class="img-bg" :style="'background-image: url(' + currentMusic.al.picUrl + '); z-index: -1;'"></div>
-            <header class="player-detail-header list-item">
-                <div class="list-item-left" @click.stop="backToPrev()">
-                   <i style="font-size: 3rem;" class="icon-angle-left"></i> 
-                </div>
-                <div class="list-item-middle">
-                    <div class="music-name">
-                        <p>{{track.musicName}}</p>
+        <transition name="fade-in">
+            <div v-if="currentMusic && !isLoadingMusic" class="player-detail-container">
+                <div class="img-bg" :style="'background-image: url(' + currentMusic.al.picUrl + '); z-index: -1;'"></div>
+                <header class="player-detail-header list-item">
+                    <div class="list-item-left" @click.stop="backToPrev()">
+                       <i style="font-size: 3rem;" class="icon-angle-left"></i> 
                     </div>
-                    <div class="desc-text">{{track.arName}}</div>
-                </div>
-                <div class="list-item-right">
-                    <i class="icon-share-alt"></i>
-                </div>
-                
-            </header>
-            <section class="player-detail-lyric">
-                <div class="cd-container">
-                    <div :class="['cd-ar-picture', { 'not-playing': !playInfo.isPlaying }]">
-                        <img :src="currentMusic.al.picUrl">
-                    </div>
-                    <div :class="['cd-wrapper', { 'not-playing': !playInfo.isPlaying }]"></div>
-                </div>
-                <div class="current-lyric">{{playInfo.currentLyric}}</div>
-                <div :class="['play-stick', { 'not-playing': !playInfo.isPlaying }]"></div>
-            </section>
-            <section class="player-detail-control">
-                <div class="personal-operation">
-                    <i class="icon-heart-empty personal-operation-item"></i>
-                    <i class="icon-download-alt personal-operation-item"></i>
-                    <i class="icon-comment-alt personal-operation-item"></i>
-                    <i class=" icon-list-ul personal-operation-item"></i>
-                </div>
-                <div class="my-progress-bar">
-                    <span>{{playInfo.currentTime | time}}</span>
-                    <div class="bar-wrapper">
-                        <div class="outer-bar">
-                            <div class="inner-bar" :style="{width: playInfo.percent * 100 + '%'}"></div>
+                    <div class="list-item-middle">
+                        <div class="music-name">
+                            <p>{{track.musicName}}</p>
                         </div>
+                        <div class="desc-text">{{track.arName}}</div>
                     </div>
-                    <span>{{playInfo.totalTime | time}}</span>
-                </div>
-                <div class="play-control">
-                    <i class="play-control-item icon-refresh"></i>
-                    <i class="play-control-item icon-step-backward" @click="playPrev"></i>
-                    <i :class="['play-control-item', playInfo.isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
-                    <i class="play-control-item icon-step-forward" @click.stop="playNext"></i>
-                    <i class="play-control-item icon-indent-right"></i>
-                </div>
-            </section>
-        </div>
+                    <div class="list-item-right">
+                        <i class="icon-share-alt"></i>
+                    </div>
+                    
+                </header>
+                <section class="player-detail-lyric">
+                    <div class="cd-container">
+                        <div :class="['cd-ar-picture', { 'not-playing': !playInfo.isPlaying }]">
+                            <img :src="currentMusic.al.picUrl">
+                        </div>
+                        <div :class="['cd-wrapper', { 'not-playing': !playInfo.isPlaying }]"></div>
+                    </div>
+                    <div class="current-lyric">{{playInfo.currentLyric}}</div>
+                    <div :class="['play-stick', { 'not-playing': !playInfo.isPlaying }]"></div>
+                </section>
+                <section class="player-detail-control">
+                    <div class="personal-operation">
+                        <i class="icon-heart-empty personal-operation-item"></i>
+                        <i class="icon-download-alt personal-operation-item"></i>
+                        <i class="icon-comment-alt personal-operation-item"></i>
+                        <i class=" icon-list-ul personal-operation-item"></i>
+                    </div>
+                    <div class="my-progress-bar">
+                        <span>{{playInfo.currentTime | time}}</span>
+                        <div class="bar-wrapper">
+                            <div class="outer-bar" ref="outerBar">
+                                <div ref="progressBar" 
+                                    :class="['inner-bar', {'not-playing': !playInfo.isPlaying }]"
+                                    :style="{width: playInfo.percent * 100 + '%'}"
+                                >
+                                    <v-touch v-show="!isLoadingUrl" class="inner-bar-dot" @panstart="panStart($event)" @panmove="adjustProgress($event)" @panend="panEnd"></v-touch>
+                                    <loading v-show="isLoadingUrl" small=true class="inner-bar-dot-loading"></loading>
+                                </div>
+                            </div>
+                        </div>
+                        <span>{{playInfo.totalTime | time}}</span>
+                    </div>
+                    <div class="play-control">
+                        <i class="play-control-item icon-refresh"></i>
+                        <i class="play-control-item icon-step-backward" @click="playPrev"></i>
+                        <i :class="['play-control-item', playInfo.isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
+                        <i class="play-control-item icon-step-forward" @click.stop="playNext"></i>
+                        <i class="play-control-item icon-indent-right"></i>
+                    </div>
+                </section>
+            </div>
+        </transition>
+        <transition name="fade-in">
+            <div v-if="!currentMusic || isLoadingMusic" style="height: 100vh;">
+                <loading></loading>
+            </div>
+        </transition>
     </div>
 </template>
 
 <script>
 
     import { mapState, mapActions } from 'vuex'
+    import Loading from '../template/Loading'
 
     export default {
         name: 'musicPlayerDetail',
         data() {
             return {
-                
+                originalWidth: 0,
+                adjustPercent: 0
             }
         },
         components: {
-
+            Loading
         },
         created() {
             // this.$http()
@@ -89,7 +104,8 @@
                 track: state => state.player.track,
                 lyric: state => state.player.lyric,
                 klyric: state => state.player.klyric,
-                playList: state => state.player.playList
+                playList: state => state.player.playList,
+                isLoadingUrl: state => state.player.isLoadingUrl
             })
         },
         methods: {
@@ -102,6 +118,27 @@
             ]),
             backToPrev() {
                 this.$router.go(-1);
+            },
+            panStart(event) {
+                this.originalWidth = this.$refs.progressBar.offsetWidth;
+                this.outerBarWidth = this.$refs.outerBar.offsetWidth;
+                this.originalPercent = this.originalWidth / this.outerBarWidth;
+                this.$store.commit('setIsJustingTime', {
+                    isJustingTime: true
+                })
+            },
+            panEnd(event) {
+                let currentTime = this.adjustPercent * this.playInfo.totalTime;
+                this.$eventBus.$emit('adjustTime', currentTime);
+                this.$store.commit('setIsJustingTime', {
+                    isJustingTime: false
+                })
+            },  
+            adjustProgress(event) {
+                const progressBar = this.$refs.progressBar;
+                this.adjustPercent = (this.originalWidth + event.deltaX) / this.outerBarWidth;
+                progressBar.style.width = this.adjustPercent * 100 + '%';
+
             }
         }
     }
@@ -223,7 +260,7 @@
         border-radius: 50%;
         animation: cd_rotate 10s linear infinite;
     }
-    .cd-wrapper.not-playing, .cd-ar-picture.not-playing {
+    .cd-wrapper.not-playing, .cd-ar-picture.not-playing, .inner-bar.not-playing {
         animation-play-state: paused;
     }
     @keyframes cd_rotate {
@@ -293,10 +330,17 @@
         width: 0;
         background: #ce3d3e;
         position: relative;
-        transition: all .3s linear;
+        transition: all .1s linear;
+        /*animation-name: bar_width;*/
+        /*animation-fill-mode: forwards;*/
+        /*animation-duration: 3s;*/
     }
-    .inner-bar:after {
-        content: '';
+    @keyframes bar_width {
+        to {
+            width: 100%;
+        }
+    }
+    .inner-bar-dot {
         display: block;
         position: absolute;
         right: -0.5rem;
@@ -315,5 +359,16 @@
         color: #fff;
         text-align: center;
         font-size: 2rem;
+    }
+
+    .inner-bar-dot-loading {
+        display: block;
+        position: absolute;
+        right: -0.5rem;
+        bottom: -0.5rem;
+        height: 1rem!important;
+        width: 1rem!important;
+        border-radius: 50%;
+        background: #d43c33;
     }
 </style>

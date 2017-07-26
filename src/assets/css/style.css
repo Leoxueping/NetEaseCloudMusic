@@ -371,6 +371,23 @@ a:hover, a:focus {
   opacity: 0;
 }
 
+.fade-scale-in-enter-active {
+  transition: all .3s ease;
+}
+.fade-scale-in-leave-active {
+  transition: all .3s ease;
+}
+.fade-scale-in-enter
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: scale(0);
+  opacity: 0;
+}
+.fade-scale-in-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: scale(0);
+  opacity: 0;
+}
+
 /* 水波纹 */
 .ripple-effect {
     position: relative;

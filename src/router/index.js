@@ -9,6 +9,7 @@ import MusicPlayerDetail from '@/components/page/MusicPlayerDetail'
 import MyNav from '@/components/template/Nav'
 import MyHeader from '@/components/template/Header'
 import Temp from '@/components/template/Temp'
+import SearchResult from '@/components/page/SearchResult'
 
 Vue.use(Router)
 
@@ -62,6 +63,14 @@ export default new Router({
         components: {
             default: MusicPlayerDetail,
             header: Temp,
+            nav: Temp
+        }
+    }, {
+        path: '/SearchResult/:keyWords',
+        name: 'SearchResult',
+        components: {
+            default: SearchResult,
+            header: MyHeader,
             nav: Temp
         }
     }],

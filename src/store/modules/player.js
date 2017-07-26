@@ -9,11 +9,13 @@ const state = {
         // playInterval: null,
         currentLyric: '暂无歌词',
         percent: 0,
-        showThePlayer: false
+        showThePlayer: false,
+        // progressTotalTime: 0/*进度条宽度从调整当前播放时间时间后到100%的时间*/
     },
     playList: null,
-
-    isLoadingMusic: true,
+    isLoadingUrl: true,/*audio加载音频资源*/
+    isLoadingMusic: true,/*请求音频资源*/
+    isJustingTime: false,/*是否正在手动调整进度*/
     // showThePlayer: false,
     track: {/*这是切换音乐的时候立即获得获得的数据，不需要ajax请求的*/
         id: '',
@@ -71,6 +73,19 @@ const actions = {
         // }).then(res => {
         //     console.log(res)
         // })
+    },
+
+    playAndAddToList({ commit, state, dispatch }, { song }) {
+
+        commit('addMusicToPlayList', { song })
+
+        dispatch('changeMusic', {
+            id: song.id,
+            arName: song.name,
+            musicName: song.name,
+            showThePlayer: true
+        });
+
     },
 
     playEnded({ state, commit, dispatch }) {
@@ -135,7 +150,6 @@ const mutations = {
         state.playInfo.isPlaying = false;
         state.playInfo.currentTime = 0;
         state.playInfo.percent = 0;
-
     },
     changeMusicTrack(state, { id, arName, musicName, showThePlayer }) {
         // let theAudio = this.$refs.musicPlayerAudio;
@@ -151,7 +165,11 @@ const mutations = {
 
     setLyric(state, payload) {
 
-        
+        if (payload.uncollected) {
+            state.lyric = null;
+            state.klyric = null;
+            return;
+        }
         let lyric = payload.lrc.lyric,
             lines = lyric.split('\n'),  
             pattern = /\[\d{2}:\d{2}.\d{1,3}\]/g,
@@ -186,9 +204,17 @@ const mutations = {
         state.playInfo.showThePlayer = false;
     },
 
+    showThePlayer(state) {
+        state.playInfo.showThePlayer = true;
+    },
+
     setThePlayInfo(state, { currentTime, percent, currentLyric }) {
         state.playInfo.currentTime = currentTime;
-        state.playInfo.percent = percent;
+
+        if(!state.isJustingTime) {
+            state.playInfo.percent = percent;
+        }
+        
         state.playInfo.currentLyric = currentLyric;
     },
 
@@ -201,8 +227,49 @@ const mutations = {
         console.log(playList)
     },
 
+    addMusicToPlayList(state, { song }) {
+        const playList = state.playList,
+              currentMusic = state.currentMusic;
+              // currentMusic.id
+        if(!playList) {
+            state.playList = {
+                tracks: [song], 
+                trackIds: [{
+                    id: song.id
+                }]
+            }
+            return;
+        }
+
+        let currentIndex = 0;
+        
+        if(currentMusic) {
+            for(let i = 0, len = playList.tracks.length; i < len; i ++) {
+                if (playList.tracks[i].id === currentMusic.id) {
+                    currentIndex = i;
+                }
+            }
+        }
+        
+        playList.tracks.splice(currentIndex, 0, song);
+        playList.trackIds.splice(currentIndex, 0, {id: song.id});
+    },
+
     setTotalTime(state, { totalTime }) {
         state.playInfo.totalTime = totalTime;
+    },
+
+    adjustTime(state, { currentTime }) {
+        const playInfo = state.playInfo;
+        playInfo.currentTime = currentTime;
+    },
+
+    setLoadingUrl(state, { isLoadingUrl }) {
+        state.isLoadingUrl = isLoadingUrl;
+    },
+
+    setIsJustingTime(state, { isJustingTime }) {
+        state.isJustingTime = isJustingTime;
     }
 }
 

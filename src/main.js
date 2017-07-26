@@ -7,10 +7,14 @@ import axios from 'axios'
 import store from './store'
 import filter from './filter/index.js'
 import ripple from './util/ripple.js'
+import VueTouch from 'vue-touch'
 
 /*全局css*/
 import style from './assets/css/style.css'
 import fontAwsome from './assets/css/font-awesome.min.css'
+
+/*手指触摸插件*/
+Vue.use(VueTouch, {name: 'v-touch'})
 
 /*事件bus，组件间传递事件*/
 Vue.prototype.$eventBus = new Vue({});
