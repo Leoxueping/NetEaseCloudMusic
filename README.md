@@ -2,6 +2,9 @@
 
 > vue版网易云音乐web app
 
+## 在线地址
+http://119.29.201.53
+
 ## 接口来自
 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
