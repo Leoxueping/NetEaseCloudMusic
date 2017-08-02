@@ -1,9 +1,20 @@
 <template>
     <div class="swipe">
-        <ul>
-            <li ref="swipeItem" v-for="(item, index) in banners" :class="['swipe-item', {'not-current': current + 1 === index}, {current: current === index}]">
-                <img :src="item.pic">
+        <ul class="swipe-container">
+            <li @transitionend="transitionend($event)" 
+                ref="swipeItem" v-for="(item, index) in banners" 
+                :class="['swipe-item', {prev: prev === index}, 
+                        {'next': next === index}, 
+                        {current: current === index}, 
+                        {'animation-it': animationIndex === index},
+                        {'not-animation-it': notAnimationIndex === index}]">
+                <v-touch @panmove="panMove($event, index)" @panstart="panStart($event)" @panend="panEnd($event, index)">
+                    <img :src="item.pic">
+                </v-touch>
             </li>
+        </ul>
+        <ul class="swipe-dot-container">
+            <li v-for="index in banners.length" :class="['dot-item', { active: currentDot===index-1 }]"></li>
         </ul>
         <alert-info ref="alertInfo"></alert-info>
     </div>
@@ -18,14 +29,33 @@
         data() {
             return {
                 banners:[],
-
                 current: 0,
-                bannerInterval: ''
+                bannerInterval: null,
+                animationIndex: -1,
+                notAnimationIndex: -1,
+                currentDot: 0
             }
         },
 
         components: {
             AlertInfo
+        },
+
+        computed: {
+            prev() {
+                let prev = this.current - 1;
+                if (prev >= 0) {
+                    return prev;
+                }
+                return this.banners.length - 1;
+            },
+            next() {
+                let next = this.current + 1;
+                if (next >= this.banners.length) {
+                    return 0;
+                }
+                return next;
+            }
         },
 
         mounted() {
@@ -34,19 +64,7 @@
                 let items = that.$refs.swipeItem;
                 if (items && items.length) {
                     clearInterval(interval);
-                    if (that.bannerInterval) {
-                        clearInterval(bannerInterval);
-                        that.bannerInterval = '';
-                    }
-                    let width = items[0].offsetWidth;
-                    
-                    items[that.current].style['z-index'] = 200;
-                    items[that.current + 1].style.transform = 'translateX('+ width +'px)';
-
-                    that.bannerInterval = setInterval(function () {
-                        
-                        that.next();
-                    }, 2000)
+                    that.beginAutoPlay();
                 }
             })
             
@@ -54,23 +72,79 @@
         },
 
         methods: {
-            next() {
-                let that = this,
-                    items = that.$refs.swipeItem;
-                if(!items || !items.length) {
-                    return;
+            goNext() {
+                let length = this.banners.length;
+                this.current = (this.current + 1) % length;
+            },
+            goPrev() {
+                let current = this.current - 1;
+                if (current < 0) {
+                    current = this.banners.length - 1;
                 }
-                let width = items[0].offsetWidth,
-                    length = that.banners.length;
-                // console.log(width)
-                items[that.current].style['z-index'] = 200;
-                items[that.current].style.transform = 'translateX(-'+ width +'px)';
-                // console.log(that.$refs.swipeItem[that.current])
-                that.current = (that.current + 1) % length;
-                items[that.current].style['z-index'] = 200;
-                items[that.current].style.transform = 'translateX(0)';
-                items[(that.current + 1) % length].style['z-index'] = -1;
-                items[(that.current + 1) % length].style.transform = 'translateX('+ width +'px)';
+                this.current = current;
+            },
+            beginAutoPlay() {
+                let that = this;
+                that.bannerInterval = setInterval(function () {
+                    that.goNext();
+                }, 3000)
+            },
+            stopAutoPlay() {
+                clearInterval(this.bannerInterval);
+                this.bannerInterval = null;
+            },
+            panStart(event) {
+                this.stopAutoPlay();
+            },
+            panEnd(event, index) {
+                let target = event.target.parentNode.parentNode,
+                    prevNode = target.previousSibling || target.parentNode.lastChild,
+                    nextNode = target.nextSibling || target.parentNode.firstChild,
+                    deltaX = event.deltaX,
+                    width = target.offsetWidth / 2;
+                if (deltaX > width) {
+                    this.animationIndex = index;
+                    if(index === 1) {
+                        this.notAnimationIndex = this.banners.length - 1;
+                    }
+                    this.goPrev();
+                }else if (deltaX < -width) {
+                    this.goNext();
+                }else {
+                    // nextNode.className = nextNode.className + ' animation-it';
+                    this.animationIndex = index + 1 >= this.banners.length ? 0 : index + 1;
+                }
+                target.removeAttribute('style');
+                prevNode.removeAttribute('style');
+                nextNode.removeAttribute('style');
+                this.beginAutoPlay();
+            },
+            panMove(event, index) {
+                let target = event.target.parentNode.parentNode,
+                    prevNode = target.previousSibling || target.parentNode.lastChild,
+                    nextNode = target.nextSibling || target.parentNode.firstChild,
+                    deltaX = event.deltaX,
+                    width = target.offsetWidth;
+                prevNode.style.transform = `translateX(${-width+deltaX}px)`;
+                prevNode.style['transition-duration'] = '0ms';
+                nextNode.style.transform = `translateX(${width+deltaX}px)`;
+                nextNode.style['transition-duration'] = '0ms';
+                nextNode.style['z-index'] = '200';
+                target.style.transform = `translateX(${deltaX}px)`;
+                target.style['transition-duration'] = '0ms';
+                if (deltaX > width / 2) {
+                    this.currentDot = index - 1 < 0 ? this.banners.length - 1 : index - 1
+                }
+                if(deltaX < -width / 2) {
+                    this.currentDot = (index + 1) % this.banners.length;
+                }
+            },
+            transitionend(event) {
+                // let target = event.target;
+                // target.className = target.className.replace(/(\sanimation\-it)|(\snot\-animation\-it)/g, '');
+                // console.log(target)
+                this.animationIndex = -1;
+                this.notAnimationIndex = -1;
             }
         },
 
@@ -96,33 +170,76 @@
             // const that = this;
             // clearInterval(that.bannerInterval);
 
+        },
+
+        watch: {
+            current(to) {
+                this.currentDot = to;
+            }
         }
     }
 </script>
 
 <style scoped>
-    .swipe>ul {
+    .swipe {
+        position: relative;
+    }
+    .swipe-container {
         position: relative;
         overflow: hidden;
         height: 139px;
     }
     .swipe-item {
         /*transform: translateX(2000px);*/
-        transition:all 500ms;
         width: 100%;
         position: absolute;
         top: 0;
+    }
+    .animation-it {
+        transition:transform 600ms!important;
+        z-index: 300!important;
+    }
+    .not-animation-it {
+        transition:transform 0!important;
+        z-index: -1!important;
+    }
+    .current {
+        transition:transform 600ms;
+        z-index: 200;
+        transform: translateX(0);
+    }
+    .prev {
+        transition:transform 600ms;
+        z-index: 200;
+        transform: translateX(-100%);
+    }
+    .next {
+        transition:transform 0;
+        z-index: -1;
+        transform: translateX(100%);
     }
     .swipe-item img {
         width: 100%;
         height: 139px;
     }
-    /*.swipe-item.current {
-        transform: translateX(0);
-        display: block;
-    }*/
-    .swipe-item.not-current {
-        /*display: none;*/
-        /*transform: translateX(-2000px);*/
+    
+    .swipe-dot-container {
+        position: absolute;
+        bottom: .4rem;
+        z-index: 301;
+        left: 0;
+        right: 0;
+        text-align: center;
+    }
+    .dot-item {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background: #aaa;
+        display: inline-block;
+        margin: 0 .4rem;
+    }
+    .dot-item.active {
+        background: #d43c33;
     }
 </style>
