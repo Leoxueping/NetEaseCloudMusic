@@ -35,7 +35,10 @@
             <transition name="fade-in">
                 <div class="music-cards" v-if="musices && musices.length">
                     <div v-for="(item, index) in musices" class="music-card-item">
-                        <router-link :to="{ name: 'PlayListDetail', params: { id: musices[index].id }}">
+                        <router-link :to="{ 
+                            name: 'PlayListDetail', 
+                            params: { id: musices[index].id, copywriter: musices[index].copywriter }}"
+                        >
                             <div class="my-badge">
                                 <i class="icon-headphones"></i>
                                 {{parseInt(item.playCount / 10000)}}万

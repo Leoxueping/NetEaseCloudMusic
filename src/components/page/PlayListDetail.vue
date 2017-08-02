@@ -2,13 +2,17 @@
     <transition name="slide-left">
         <div class="play-list-detail page-container">
             <div class="list-header">
+                
+                <div class="img-bg" :style="'background-image:url(' + playlist.coverImgUrl + ')'">
+                </div>
                 <div class="header-nav">
-                    <div class="header-nav-left">
+                    <div class="header-nav-left ripple-effect" @click="goBack">
                         <i class="icon-angle-left"></i>
                     </div>
-                    <div class="header-nav-right"></div>
-                </div>
-                <div class="img-bg" :style="'background-image:url(' + playlist.coverImgUrl + ')'">
+                    <div class="header-nav-right">
+                        <div class="header-nav-name">歌单</div>
+                        <div class="header-nav-desc">{{copywriter}}</div>
+                    </div>
                 </div>
                 <div class="list-header-content">
                     <div class="list-header-left">
@@ -74,6 +78,7 @@
         data() {
             return {
                 id: '',
+                copywriter: '',
                 playlist: {
                     coverImgUrl: defaultCover
                 },
@@ -91,6 +96,7 @@
         activated() {
             const that = this;
             this.id = this.$route.params.id;
+            this.copywriter = this.$route.params.copywriter;
             this.$http.get('/playlist/detail?id=' + that.$route.params.id)
                 .then(function (response) {
                     let data = response.data;
@@ -128,6 +134,11 @@
 
                 /*在MusicPlayer接收，使音乐停止播放*/
                 this.$eventBus.$emit('changeMusic');
+            },
+
+            goBack() {
+                this.$router.go(-1);
+                this.$ripple(event);
             }
         },
 

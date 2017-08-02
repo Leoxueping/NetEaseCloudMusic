@@ -270,6 +270,21 @@ li {
 
 .header-nav {
   color: #fff;
+  z-index: 2;
+  display: flex;
+  margin: -20px -10px 20px -10px;
+}
+.header-nav-left {
+    z-index: 2;
+    font-size: 3rem;
+    width: 2.5rem;
+}
+.header-nav-right {
+    z-index: 2;
+}
+.header-nav-desc {
+    color: #949494;
+    font-size: .1rem
 }
 
 a {

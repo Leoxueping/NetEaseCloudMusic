@@ -43,6 +43,6 @@
         transform: translate(-50%, 0);
         text-align: center;
         padding: .5rem 2rem;        
-        z-index: 300;
+        z-index: 400;
     }
 </style>

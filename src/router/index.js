@@ -50,7 +50,7 @@ export default new Router({
             nav: MyNav
         } 
     }, {
-        path: '/PlayListDetail/:id',
+        path: '/PlayListDetail/:id/:copywriter',
         name: 'PlayListDetail',
         components: {
             default: PlayListDetail,
