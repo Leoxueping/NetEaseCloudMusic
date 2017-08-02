@@ -246,45 +246,55 @@ li {
 }
 
 .page-container {
-    padding-bottom: 60px;
-    background: #eee;
+  padding-bottom: 60px;
+  background: #eee;
 }
 
 .img-bg {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: 50%;
-    filter: blur(20px) brightness(50%);
-    transform: scale(1.5);
-    z-index: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50%;
+  filter: blur(20px) brightness(50%);
+  transform: scale(1.5);
+  z-index: 1;
 }
 
 .desc-text {
-    color: #949494;
+  color: #949494;
+}
+
+.header-nav {
+  color: #fff;
 }
 
 a {
-    color: #333;
+  color: #333;
 }
 
-a:hover, a:focus {
-    color: #333;
-    text-decoration: none;
+a:hover,
+a:focus {
+  color: #333;
+  text-decoration: none;
 }
 
 .slide-up-enter-active {
   transition: all .3s ease;
 }
+
 .slide-up-leave-active {
   transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
-.slide-up-enter, .slide-up-leave-to
-/* .slide-fade-leave-active for <2.1.8 */ {
+
+.slide-up-enter,
+.slide-up-leave-to
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   transform: translateY(100px);
   opacity: 0;
 }
@@ -292,14 +302,19 @@ a:hover, a:focus {
 .slide-left-enter-active {
   transition: all .3 ease;
 }
+
 .slide-left-leave-active {
   transition: all .3s ease;
 }
+
 .slide-left-enter
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   transform: translateX(100vw);
   opacity: 0;
 }
+
 .slide-left-leave-to {
   transform: translateX(-100vw);
   opacity: 0;
@@ -308,16 +323,23 @@ a:hover, a:focus {
 .slide-right-enter-active {
   transition: all .3s ease;
 }
+
 .slide-right-leave-active {
   transition: all .3s ease;
 }
+
 .slide-right-enter
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   transform: translateX(-100vw);
   opacity: 0;
 }
+
 .slide-right-leave-to
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   transform: translateX(100vw);
   opacity: 0;
 }
@@ -325,16 +347,23 @@ a:hover, a:focus {
 .slide-up-enter-active {
   transition: all .3s ease;
 }
+
 .slide-up-leave-active {
   transition: all .3s ease;
 }
+
 .slide-up-enter
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   transform: translateY(100vh);
   opacity: 0;
 }
+
 .slide-up-leave-to
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   transform: translateY(-100vh);
   opacity: 0;
 }
@@ -342,16 +371,23 @@ a:hover, a:focus {
 .slide-down-enter-active {
   transition: all .3s ease;
 }
+
 .slide-down-leave-active {
   transition: all .3s ease;
 }
+
 .slide-down-enter
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   transform: translateY(-100vh);
   opacity: 0;
 }
+
 .slide-down-leave-to
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   transform: translateY(100vh);
   opacity: 0;
 }
@@ -359,57 +395,100 @@ a:hover, a:focus {
 .fade-in-enter-active {
   transition: all .3s ease;
 }
+
 .fade-in-leave-active {
   transition: all .3s ease;
 }
+
 .fade-in-enter
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   opacity: 0;
 }
+
 .fade-in-leave-to
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   opacity: 0;
 }
 
 .fade-scale-in-enter-active {
   transition: all .3s ease;
 }
+
 .fade-scale-in-leave-active {
   transition: all .3s ease;
 }
+
 .fade-scale-in-enter
-/* .slide-fade-leave-active for <2.1.8 */ {
-  transform: scale(0);
-  opacity: 0;
-}
-.fade-scale-in-leave-to
-/* .slide-fade-leave-active for <2.1.8 */ {
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
   transform: scale(0);
   opacity: 0;
 }
 
+.fade-scale-in-leave-to
+/* .slide-fade-leave-active for <2.1.8 */
+
+{
+  transform: scale(0);
+  opacity: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* 水波纹 */
+
 .ripple-effect {
-    position: relative;
-    overflow: hidden; /*有边界的水波纹*/
+  position: relative;
+  overflow: hidden;
+  /*有边界的水波纹*/
 }
+
 .ripple-effect:active {
-    background: rgba(0, 0, 0, 0.25);
-    transition: all 0.33s ease-out;
+  background: rgba(0, 0, 0, 0.25);
+  transition: all 0.33s ease-out;
 }
+
 .ripple {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.25);
-    border-radius: 100%;
-    transform: scale(0);
-    pointer-events: none;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 100%;
+  transform: scale(0);
+  pointer-events: none;
 }
+
 .ripple.show {
-    animation: ripple 0.66s ease-out;
+  animation: ripple 0.66s ease-out;
 }
+
 @keyframes ripple {
-    to {
-        transform: scale(2);
-        opacity: 0;
-    }
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
 }

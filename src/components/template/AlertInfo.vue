@@ -42,7 +42,7 @@
         left: 50%;
         transform: translate(-50%, 0);
         text-align: center;
-        padding: .5rem 4rem;        
+        padding: .5rem 2rem;        
         z-index: 300;
     }
 </style>

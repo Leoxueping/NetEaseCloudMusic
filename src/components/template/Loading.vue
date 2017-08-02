@@ -131,7 +131,7 @@
         width: 18px;
         height: 18px;
         margin: -9px 0 0 -9px;
-        background: #fff;
+        background: #eee;
         border-radius: 18px;
     }
 

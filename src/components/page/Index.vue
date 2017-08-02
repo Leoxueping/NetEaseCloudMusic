@@ -3,17 +3,17 @@
         <swipe></swipe>
         <div class="cards">
             <ul>
-                <li class="circle-li">
+                <li class="circle-li" @click="gotoPersonalFM">
                     <div class="circle"></div>
                     <p>私人FM</p>
                 </li>
-                <li class="circle-li">
+                <li class="circle-li" @click="gotoDayRecommand">
                     <div class="circle">
-                        <div class="date">{{date}}</div>
+                        <div class="date">{{new Date().getDate()}}</div>
                     </div>
                     <p>每日歌曲推荐</p>
                 </li>
-                <li class="circle-li">
+                <li class="circle-li" @click="gotoHotList">
                     <div class="circle"></div>
                     <p>云音乐热歌榜</p>
                 </li>
@@ -32,22 +32,29 @@
                     <i class="icon-angle-right"></i>
                 </div>
             </div>
-            <div class="music-cards">
-                <div v-for="(item, index) in musices" class="music-card-item">
-                    <router-link :to="{ name: 'PlayListDetail', params: { id: musices[index].id }}">
-                        <div class="my-badge">
-                            <i class="icon-headphones"></i>
-                            {{parseInt(item.playCount / 10000)}}万
-                        </div>
-                        <div>
-                            <img :src="item.picUrl" style="height: 100%; width: 100%;">
-                        </div>
-                        <p class="card-item-desc">
-                            {{item.name}}
-                        </p>
-                    </router-link>
+            <transition name="fade-in">
+                <div class="music-cards" v-if="musices && musices.length">
+                    <div v-for="(item, index) in musices" class="music-card-item">
+                        <router-link :to="{ name: 'PlayListDetail', params: { id: musices[index].id }}">
+                            <div class="my-badge">
+                                <i class="icon-headphones"></i>
+                                {{parseInt(item.playCount / 10000)}}万
+                            </div>
+                            <div>
+                                <img :src="item.picUrl" style="height: 100%; width: 100%;">
+                            </div>
+                            <p class="card-item-desc">
+                                {{item.name}}
+                            </p>
+                        </router-link>
+                    </div>
                 </div>
-            </div>
+            </transition>
+            <transition name="fade-in">
+                <div v-if="!musices || !musices.length" style="height: 10rem;">
+                    <loading></loading>
+                </div>
+            </transition>
         </div>
         <!-- <music-player></music-player> -->
         <alert-info ref="alertInfo"></alert-info>
@@ -58,18 +65,19 @@
 <script>
     import AlertInfo from '../template/AlertInfo.vue'
     import Swipe from '../template/Swipe.vue'
+    import Loading from '../template/Loading.vue'
     // import MusicPlayer from '../template/MusicPlayer.vue'
     export default {
         name: 'indexPage',
         data() {
             return {
-                date: 17,
                 musices: []
             }
         },
         components: {
             Swipe,
-            AlertInfo
+            AlertInfo,
+            Loading
         },
         created() {
 
@@ -87,7 +95,11 @@
                 })
                 .catch(function (error) {
                     // alert('服务器错误!')
-                    that.$refs.alertInfo.showMsg('服务器错误');
+                    if (error.message.indexOf('timeout') >= 0) {
+                        that.$refs.alertInfo.showMsg('请求超时');
+                    }else {
+                        that.$refs.alertInfo.showMsg('服务器错误');
+                    }
                     
                     // console.error('服务器错误', error)
                 });
@@ -98,6 +110,15 @@
             //     const that = this;
             //     this.$router.replace({name: 'PlayListDetail', params: { id: that.musices[index].id }});
             // }
+            gotoPersonalFM() {
+                this.$refs.alertInfo.showMsg('该功能需登录，暂未开发');
+            },
+            gotoDayRecommand() {
+                this.$refs.alertInfo.showMsg('该功能需登录，暂未开发');
+            },
+            gotoHotList() {
+
+            }
         }
     }
 </script>
@@ -144,6 +165,8 @@
         width: 30px;
         margin-left: -15px;
         margin-top: -15px;
+        text-align: center;
+        line-height: 30px;
     }
 
     .rec-music-list {

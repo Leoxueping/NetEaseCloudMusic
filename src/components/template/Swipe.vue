@@ -23,12 +23,19 @@
 <script>
 
     import AlertInfo from '../template/AlertInfo.vue'
+    import defaultCover from '../../assets/default_cover.png'
 
     export default {
         name: 'swipe',
         data() {
             return {
-                banners:[],
+                banners:[{
+                    pic: defaultCover
+                },{
+                    pic: defaultCover
+                },{
+                    pic: defaultCover
+                }],
                 current: 0,
                 bannerInterval: null,
                 animationIndex: -1,
@@ -162,7 +169,11 @@
                     }
                 })
                 .catch(function (error) {
-                    that.$refs.alertInfo.showMsg('服务器错误');
+                    if (error.message.indexOf('timeout') >= 0) {
+                        that.$refs.alertInfo.showMsg('请求超时');
+                    }else {
+                        that.$refs.alertInfo.showMsg('服务器错误');
+                    }
                 });
         },
 
@@ -232,8 +243,8 @@
         text-align: center;
     }
     .dot-item {
-        width: 1rem;
-        height: 1rem;
+        width: .8rem;
+        height: .8rem;
         border-radius: 50%;
         background: #aaa;
         display: inline-block;

@@ -1,8 +1,13 @@
 <template>
     <transition name="slide-left">
         <div class="play-list-detail page-container">
-            
             <div class="list-header">
+                <div class="header-nav">
+                    <div class="header-nav-left">
+                        <i class="icon-angle-left"></i>
+                    </div>
+                    <div class="header-nav-right"></div>
+                </div>
                 <div class="img-bg" :style="'background-image:url(' + playlist.coverImgUrl + ')'">
                 </div>
                 <div class="list-header-content">
