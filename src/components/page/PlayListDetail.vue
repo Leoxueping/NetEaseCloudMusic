@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <div class="list-item">
+            <div class="list-item ripple-effect" @click.stop="changeMusic($event, 0)">
                 <div class="list-item-left">
                     <i style="font-size:20px;" class="icon-play-circle"></i>
                 </div>
@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <div v-if="playlist.tracks" @click.stop="changeMusic(index)" class="list-item" v-for="(item, index) in playlist.tracks">
+            <div v-if="playlist.tracks" @click.stop="changeMusic($event, index)" class="list-item ripple-effect" v-for="(item, index) in playlist.tracks">
                 <div class="list-item-left">
                     <span class="desc-text">{{index + 1}}</span>
                 </div>
@@ -113,7 +113,9 @@
         },
 
         methods: {
-            changeMusic(index) {
+            changeMusic(event, index) {
+
+                this.$ripple(event);
                 const track = this.playlist.tracks[index];
                 const that = this;
 
@@ -126,7 +128,7 @@
 
                 const playList = this.$store.state.player.playList;
 
-                if (!playList || playList.tracks[0].id !== this.playlist.tracks[0].id) {
+                if (!playList || playList.id !== this.playlist.id) {
                     this.$store.commit('replacePlayList', {
                         playList: that.playlist
                     })
@@ -191,7 +193,7 @@
     .list-item {
         display: flex;
         /*padding: 10px;  */
-        font-size: 18px;
+        font-size: 1.5rem;
         line-height: 2;
     }
     .list-item-left {
@@ -203,12 +205,14 @@
     .list-item-middle {
         flex: 3;
         width: 0;
+        border-top: solid 1px rgba(107, 107, 107, 0.298);
     }
     .list-item-right {
         width: 80px;
         display: flex;
         align-items: center;
         justify-content: center;
+        display: none;
     }
     
     .music-name {

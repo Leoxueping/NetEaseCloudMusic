@@ -17,7 +17,7 @@ const state = {
     isLoadingMusic: true,/*请求音频资源*/
     isJustingTime: false,/*是否正在手动调整进度*/
     // showThePlayer: false,
-    track: {/*这是切换音乐的时候立即获得获得的数据，不需要ajax请求的*/
+    track: {/*这是切换音乐的时候立即获得的数据，不需要ajax请求的*/
         id: '',
         arName: '',
         musicName: ''
@@ -27,7 +27,8 @@ const state = {
     },
     klyric: {
 
-    }
+    },
+    showCurPlayList: false
     // showThePlayer: false
 }
 
@@ -124,6 +125,13 @@ const actions = {
                 break;
             }
         }
+    },
+
+    reThMuFrCurPlList({ state, commit, dispatch }, { removeIndex }) {
+        if (state.currentMusic.id === state.playList.tracks[removeIndex].id) {
+            dispatch('playNext');
+        }
+        commit('reThMuFrCurPlList', { removeIndex });
     }
 }
 
@@ -170,6 +178,10 @@ const mutations = {
             state.klyric = null;
             return;
         }
+        if (payload.nolyric) {
+            state.lyric = [[6000, '纯音乐,请欣赏']]
+            return;
+        }
         let lyric = payload.lrc.lyric,
             lines = lyric.split('\n'),  
             pattern = /\[\d{2}:\d{2}.\d{1,3}\]/g,
@@ -182,7 +194,7 @@ const mutations = {
         
         lines.forEach(item => {
             let time = item.match(pattern),
-                value = item.replace(pattern, '');
+                value = item.replace(pattern, '') || result[resule.length - 1][1];
             time.forEach(item => {
                 let timeVals = item.slice(1, -1).split(':');
                 result.push([parseInt(timeVals[0]) * 60 + parseFloat(timeVals[1]), value]);
@@ -195,7 +207,6 @@ const mutations = {
 
         // console.log(result)
         // console.log(lines)
-        
         state.lyric = result;
         state.klyric = payload.klyric;
     },
@@ -231,22 +242,23 @@ const mutations = {
         const playList = state.playList,
               currentMusic = state.currentMusic;
               // currentMusic.id
-        if(!playList) {
+        if(!playList || !playList.tracks) {
             state.playList = {
                 tracks: [song], 
                 trackIds: [{
                     id: song.id
                 }]
             }
+
             return;
         }
-
         let currentIndex = 0;
         
         if(currentMusic) {
             for(let i = 0, len = playList.tracks.length; i < len; i ++) {
                 if (playList.tracks[i].id === currentMusic.id) {
                     currentIndex = i;
+                    break;
                 }
             }
         }
@@ -270,6 +282,16 @@ const mutations = {
 
     setIsJustingTime(state, { isJustingTime }) {
         state.isJustingTime = isJustingTime;
+    },
+    showCurPlayList(state) {
+        state.showCurPlayList = true;
+    },
+    hideCurPlayList(state) {
+        state.showCurPlayList = false;
+    },
+    reThMuFrCurPlList(state, { removeIndex }) {
+        state.playList.tracks.splice(removeIndex, 1);
+        state.playList.trackIds.splice(removeIndex, 1);
     }
 }
 

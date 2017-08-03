@@ -1,8 +1,14 @@
 <template>
     <div>
         <transition name="fade-in">
-            <div v-if="currentMusic && !isLoadingMusic" class="player-detail-container">
-                <div class="img-bg" :style="'background-image: url(' + currentMusic.al.picUrl + '); z-index: -1;'"></div>
+            <div v-if="currentMusic" class="player-detail-container">
+                <transition name="fade-in">
+                    <div v-show="!waitForRander" class="img-bg" :style="'background-image: url(' + currentMusic.al.picUrl + '); z-index: -1;'"></div>
+                </transition>
+                <transition name="fade-in">
+                    <div v-show="waitForRander" class="img-bg" :style="'background-image: url(' + defaultCover + '); z-index: -1;'"></div>
+                </transition>
+                
                 <header class="player-detail-header list-item">
                     <div class="list-item-left" @click.stop="backToPrev()">
                        <i style="font-size: 3rem;" class="icon-angle-left"></i> 
@@ -13,7 +19,7 @@
                         </div>
                         <div class="desc-text">{{track.arName}}</div>
                     </div>
-                    <div class="list-item-right">
+                    <div class="list-item-right" @click="donotDone">
                         <i class="icon-share-alt"></i>
                     </div>
                     
@@ -21,7 +27,12 @@
                 <section class="player-detail-lyric">
                     <div class="cd-container">
                         <div :class="['cd-ar-picture', { 'not-playing': !playInfo.isPlaying }]">
-                            <img :src="currentMusic.al.picUrl">
+                            <!-- <transition name="fade-in" mode="out-in"> -->
+                                <img :src="currentMusic.al.picUrl">
+                            <!-- </transition> -->
+                            <!-- <transition name="fade-in" mode="out-in">
+                                <img v-show="isLoadingMusic" :src="defaultCover">
+                            </transition> -->
                         </div>
                         <div :class="['cd-wrapper', { 'not-playing': !playInfo.isPlaying }]"></div>
                     </div>
@@ -30,10 +41,10 @@
                 </section>
                 <section class="player-detail-control">
                     <div class="personal-operation">
-                        <i class="icon-heart-empty personal-operation-item"></i>
-                        <i class="icon-download-alt personal-operation-item"></i>
-                        <i class="icon-comment-alt personal-operation-item"></i>
-                        <i class=" icon-list-ul personal-operation-item"></i>
+                        <i class="icon-heart-empty personal-operation-item" @click="donotDone"></i>
+                        <i class="icon-download-alt personal-operation-item" @click="donotDone"></i>
+                        <i class="icon-comment-alt personal-operation-item" @click="donotDone"></i>
+                        <i class=" icon-list-ul personal-operation-item" @click="donotDone"></i>
                     </div>
                     <div class="my-progress-bar">
                         <span>{{playInfo.currentTime | time}}</span>
@@ -51,38 +62,46 @@
                         <span>{{playInfo.totalTime | time}}</span>
                     </div>
                     <div class="play-control">
-                        <i class="play-control-item icon-refresh"></i>
+                        <i class="play-control-item icon-refresh" @click="donotDone"></i>
                         <i class="play-control-item icon-step-backward" @click="playPrev"></i>
-                        <i :class="['play-control-item', playInfo.isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
+                        <i :class="['play-control-item', playInfo.isPlaying ? 'icon-pause' : 'icon-play']" 
+                            @click="playOrPause"
+                        ></i>
                         <i class="play-control-item icon-step-forward" @click.stop="playNext"></i>
-                        <i class="play-control-item icon-indent-right"></i>
+                        <i class="play-control-item icon-indent-right" @click.stop="showCurPlayList"></i>
                     </div>
                 </section>
             </div>
         </transition>
         <transition name="fade-in">
-            <div v-if="!currentMusic || isLoadingMusic" style="height: 100vh;">
+            <div v-if="!currentMusic" style="height: 100vh;">
                 <loading></loading>
             </div>
         </transition>
+        <alert-info ref="alertInfo"></alert-info>
     </div>
 </template>
 
 <script>
 
-    import { mapState, mapActions } from 'vuex'
+    import { mapState, mapActions, mapMutations } from 'vuex'
     import Loading from '../template/Loading'
+    import defaultCover from '../../assets/default_cover.png'
+    import AlertInfo from '../template/AlertInfo'
 
     export default {
         name: 'musicPlayerDetail',
         data() {
             return {
                 originalWidth: 0,
-                adjustPercent: 0
+                adjustPercent: 0,
+                defaultCover: defaultCover,
+                waitForRander: false
             }
         },
         components: {
-            Loading
+            Loading,
+            AlertInfo
         },
         created() {
             // this.$http()
@@ -116,6 +135,9 @@
                 'playNext',
                 'playPrev'
             ]),
+            ...mapMutations([
+                'showCurPlayList'
+            ]),
             backToPrev() {
                 this.$router.go(-1);
             },
@@ -139,6 +161,19 @@
                 this.adjustPercent = (this.originalWidth + event.deltaX) / this.outerBarWidth;
                 progressBar.style.width = this.adjustPercent * 100 + '%';
 
+            },
+            donotDone() {
+                this.$refs.alertInfo.showMsg('暂未开发');
+            }
+        },
+        watch: {
+            isLoadingMusic(to) {
+                const that = this;
+                if (!to) {
+                    setTimeout(() => that.waitForRander = to, 1000);
+                }else {
+                    that.waitForRander = to;
+                }
             }
         }
     }
@@ -179,7 +214,7 @@
         flex-direction: column;
     }
     .current-lyric {
-        font-size: 1.5rem;
+        font-size: 1.45rem;
         color: #fff;
         display: flex;
         justify-content: center;

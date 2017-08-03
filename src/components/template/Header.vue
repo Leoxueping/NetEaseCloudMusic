@@ -106,7 +106,7 @@ export default {
         height: 100vh;
         width: 100%;
         background: transparent;
-        z-index: 300;
+        z-index: 310;
     }
 
     .seach-tip-list {

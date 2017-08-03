@@ -1,6 +1,6 @@
 <template>
     <transition name="slide-up">
-        <div class="music-player" v-show="playInfo.showThePlayer">
+        <div class="music-player" v-show="playInfo.showThePlayer && currentMusic">
 
             <router-link class="music-player-header" :to="{ name: 'MusicPlayerDetail', params: { id: track.id }}">
                 <img class="al-picture" :src="currentMusic && currentMusic.al.picUrl">
@@ -24,7 +24,7 @@
                     </div>
                     <i @click="playOrPause" :class="playInfo.isPlaying ? 'icon-pause pause-icon' : 'icon-play play-icon'"></i>
                 </div>
-                <div class="show-play-list">
+                <div class="show-play-list" @click.stop="showCurPlayList">
                     <i class="icon-indent-right"></i>
                 </div>
             </div>
@@ -100,7 +100,7 @@ import { mapState, mapGetters, mapMutations } from 'vuex'
         },
         methods: {
             ...mapMutations([
-                
+                'showCurPlayList'
             ]), 
             playOrPause() {
                 let theAudio = this.$refs.musicPlayerAudio;

@@ -1,6 +1,6 @@
 <template>
     <div class="swipe">
-        <ul class="swipe-container">
+        <ul class="swipe-container clearfix">
             <li @transitionend="transitionend($event)" 
                 ref="swipeItem" v-for="(item, index) in banners" 
                 :class="['swipe-item', {prev: prev === index}, 
@@ -9,7 +9,7 @@
                         {'animation-it': animationIndex === index},
                         {'not-animation-it': notAnimationIndex === index}]">
                 <v-touch @panmove="panMove($event, index)" @panstart="panStart($event)" @panend="panEnd($event, index)">
-                    <img :src="item.pic">
+                    <img @click="donotDone" :src="item.pic">
                 </v-touch>
             </li>
         </ul>
@@ -23,18 +23,18 @@
 <script>
 
     import AlertInfo from '../template/AlertInfo.vue'
-    import defaultCover from '../../assets/default_cover.png'
+    import defaultBanner from '../../assets/default_banner.png'
 
     export default {
         name: 'swipe',
         data() {
             return {
                 banners:[{
-                    pic: defaultCover
+                    pic: defaultBanner
                 },{
-                    pic: defaultCover
+                    pic: defaultBanner
                 },{
-                    pic: defaultCover
+                    pic: defaultBanner
                 }],
                 current: 0,
                 bannerInterval: null,
@@ -152,6 +152,9 @@
                 // console.log(target)
                 this.animationIndex = -1;
                 this.notAnimationIndex = -1;
+            },
+            donotDone() {
+                this.$refs.alertInfo.showMsg('暂未开发');
             }
         },
 
@@ -198,12 +201,19 @@
     .swipe-container {
         position: relative;
         overflow: hidden;
-        height: 139px;
+        /*height: 139px;*/
     }
     .swipe-item {
         /*transform: translateX(2000px);*/
         width: 100%;
         position: absolute;
+        top: 0;
+    }
+    /* 为了撑起父元素的高度 */
+    .swipe-item:first-child {
+        /*transform: translateX(2000px);*/
+        width: 100%;
+        position: relative;
         top: 0;
     }
     .animation-it {
@@ -231,7 +241,7 @@
     }
     .swipe-item img {
         width: 100%;
-        height: 139px;
+        /*height: 139px;*/
     }
     
     .swipe-dot-container {

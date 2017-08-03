@@ -79,7 +79,7 @@
 
     .m-load2-small .line-small div {
         position: absolute;
-        left: .5rem;
+        left: .43rem;
         top: 0;
         width: .1rem;
         height: 1rem;

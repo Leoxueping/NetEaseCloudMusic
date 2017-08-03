@@ -286,6 +286,10 @@ li {
     color: #949494;
     font-size: .1rem
 }
+.clearfix:after {
+    content: "";
+    clear: both;
+}
 
 a {
   color: #333;
@@ -295,6 +299,10 @@ a:hover,
 a:focus {
   color: #333;
   text-decoration: none;
+}
+
+html {
+    /*font-size: 12px;*/
 }
 
 .slide-up-enter-active {
@@ -454,28 +462,6 @@ a:focus {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* 水波纹 */
 
 .ripple-effect {
@@ -506,4 +492,8 @@ a:focus {
     transform: scale(2);
     opacity: 0;
   }
+}
+
+.hover-class:active {
+    color: rgba(0, 0, 0, 0.25);
 }

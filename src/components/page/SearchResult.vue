@@ -39,9 +39,17 @@
                 });
             },
             playAndAddToList(index) {
-                const that = this;
+                const that = this,
+                    oldSong = that.songs[index];
                 this.$store.dispatch('playAndAddToList', {
-                    song: that.songs[index]
+                    song: {
+                        a: null,
+                        al: oldSong.album,
+                        alia: oldSong.alias,
+                        ar: oldSong.artists,
+                        id: oldSong.id,
+                        name: oldSong.name
+                    }
                 })
             }
         },

@@ -16,11 +16,13 @@
             </keep-alive>
         </transition>
         <music-player></music-player>
+        <cur-play-list></cur-play-list>
     </div>
 </template>
 
 <script>
     import MusicPlayer from './components/template/MusicPlayer.vue'
+    import CurPlayList from './components/template/CurPlayList.vue'
     // import Index from './components/page/Index.vue'
     // import RecMusicList from './components/te/RecMusicList.vue'
     export default {
@@ -33,7 +35,8 @@
         components: {
             // Swipe,
             // index,
-            MusicPlayer
+            MusicPlayer,
+            CurPlayList
         },
         watch: {
             '$route'(to, from) {
