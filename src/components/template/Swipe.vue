@@ -217,25 +217,25 @@
         top: 0;
     }
     .animation-it {
-        transition:transform 600ms!important;
+        transition: transform 600ms!important;
         z-index: 300!important;
     }
     .not-animation-it {
-        transition:transform 0!important;
+        transition: transform 0!important;
         z-index: -1!important;
     }
     .current {
-        transition:transform 600ms;
+        transition: transform 600ms;
         z-index: 200;
         transform: translateX(0);
     }
     .prev {
-        transition:transform 600ms;
+        transition: transform 600ms;
         z-index: 200;
         transform: translateX(-100%);
     }
     .next {
-        transition:transform 0;
+        transition: transform 0;
         z-index: -1;
         transform: translateX(100%);
     }
