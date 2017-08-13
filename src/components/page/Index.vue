@@ -22,19 +22,17 @@
         <div class="rec-music-list">
             <div class="header">
                 <div class="list-left">
-                    <div>
-                        <img src="../../assets/aei.png" style="width: 24px; height: 24px;">
+                    <!-- <div ></div> -->
+                    <div class="header-text">
+                        <span>推荐歌单</span>
+                        <i class="icon-angle-right"></i>
                     </div>
-                    <div style="padding-left: 5px;">推荐歌单</div>
-                </div>
-                <div class="list-right">
-                    更多
-                    <i class="icon-angle-right"></i>
+                    
                 </div>
             </div>
             <transition name="fade-in">
                 <div class="music-cards" v-if="musices && musices.length">
-                    <div v-for="(item, index) in musices" class="music-card-item">
+                    <div v-for="(item, index) in musices" class="music-card-item col-3">
                         <router-link :to="{ 
                             name: 'PlayListDetail', 
                             params: { id: musices[index].id, copywriter: musices[index].copywriter }}"
@@ -59,6 +57,47 @@
                 </div>
             </transition>
         </div>
+
+        <div class="exclusive-delivery">
+            <div class="header">
+                <div class="list-left">
+                    <!-- <div ></div> -->
+                    <div class="header-text">
+                        <span>独家放送</span>
+                        <i class="icon-angle-right"></i>
+                    </div>
+                    
+                </div>
+            </div>
+            <div>
+                <transition name="fade-in">
+                    <div class="music-cards" v-if="exclusiveDeliveries && exclusiveDeliveries.length">
+                        <div v-for="(item, index) in exclusiveDeliveries" class="music-card-item col-2">
+                            <router-link :to="{ 
+                                name: 'PlayListDetail', 
+                                params: { id: exclusiveDeliveries[index].id, copywriter: exclusiveDeliveries[index].copywriter }}"
+                            >
+                                <div class="my-badge">
+                                    <i class="icon-headphones"></i>
+                                    {{parseInt(item.playCount / 10000)}}万
+                                </div>
+                                <div>
+                                    <img :src="item.picUrl" style="height: 100%; width: 100%;">
+                                </div>
+                                <p class="card-item-desc">
+                                    {{item.name}}
+                                </p>
+                            </router-link>
+                        </div>
+                    </div>
+                </transition>
+                <transition name="fade-in">
+                    <div v-if="!exclusiveDeliveries || !exclusiveDeliveries.length" style="height: 10rem;">
+                        <loading></loading>
+                    </div>
+                </transition> 
+            </div>
+        </div>
         <!-- <music-player></music-player> -->
         <alert-info ref="alertInfo"></alert-info>
     </div>
@@ -74,7 +113,8 @@
         name: 'indexPage',
         data() {
             return {
-                musices: []
+                musices: [],
+                exclusiveDeliveries: []
             }
         },
         components: {
@@ -89,23 +129,40 @@
         activated() {
             
             const that = this;
-            this.$http.get('/personalized')
-                .then(function (response) {
-                    let data = response.data;
-                    if (data.code === 200) {
-                        that.musices = data.result;
-                    }
-                })
-                .catch(function (error) {
-                    // alert('服务器错误!')
-                    if (error.message.indexOf('timeout') >= 0) {
-                        that.$refs.alertInfo.showMsg('请求超时');
-                    }else {
-                        that.$refs.alertInfo.showMsg('服务器错误');
-                    }
-                    
-                    // console.error('服务器错误', error)
-                });
+
+            /*获取推荐歌单*/
+            this.$http.get('/personalized').then(function (response) {
+                let data = response.data;
+                if (data.code === 200) {
+                    that.musices = data.result;
+                }
+            }).catch(function (error) {
+                // alert('服务器错误!')
+                if (error.message.indexOf('timeout') >= 0) {
+                    that.$refs.alertInfo.showMsg('请求超时');
+                }else {
+                    that.$refs.alertInfo.showMsg('服务器错误');
+                }
+                
+                // console.error('服务器错误', error)
+            });
+
+            /*获取独家放送*/
+            this.$http.get('/personalized/privatecontent').then(function (response) {
+                let data = response.data;
+                if (data.code === 200) {
+                    that.exclusiveDeliveries = data.result;
+                }
+            }).catch(function (error) {
+                // alert('服务器错误!')
+                if (error.message.indexOf('timeout') >= 0) {
+                    that.$refs.alertInfo.showMsg('请求超时');
+                }else {
+                    that.$refs.alertInfo.showMsg('服务器错误');
+                }
+                
+                // console.error('服务器错误', error)
+            });
         },
 
         methods: {
@@ -127,9 +184,13 @@
 </script>
 
 <style scoped>
+    .cards {
+        border-bottom: 1px solid rgba(107, 107, 107, 0.298);
+    }
     .cards>ul {
         display: flex;
         padding: 20px;
+        padding-bottom: 6px;
     }
     .circle-li {
         flex: 1;
@@ -145,6 +206,7 @@
         padding-top: 59%;
         border-radius: 50%;
         position: relative;
+        margin-bottom: 10px;
     }
     .circle-li:nth-child(1) .circle {
         background-image: url('../../assets/radio.png');
@@ -178,12 +240,29 @@
     .rec-music-list .header{
         display: flex;
         justify-content: space-between;
-        margin-bottom: 20px;
+        margin: 20px 0 5px 0;
     }
     .rec-music-list .header .list-left {
         display: flex;
         height: 24px;
         line-height: 24px;
+    }
+    .header-text {
+        position: relative;
+        padding-left: 8px;
+    }
+    .header-text::before {
+        content: "";
+        display: block;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 100%;
+        border-left: 4px solid #d43c33;
+    }
+    .icon-angle-right {
+        font-size: 1.3em;
+        font-weight: 100;
     }
     .list-right {
         height: 24px;
@@ -192,16 +271,18 @@
     }
 
     .music-card-item {
-        width: 32%;
         text-align: center;
         display: inline-block;
-        margin: 1%;
         position: relative;
     }
-    .music-card-item:nth-child(3n+0) {
+    .col-3 {
+        width: 32%;
+        margin: 1%;
+    }
+    .col-3:nth-child(3n+0) {
         margin-right: 0;
     }
-    .music-card-item:nth-child(3n+1) {
+    .col-3:nth-child(3n+1) {
         margin-left: 0;
     }
     .music-card-item .my-badge {
@@ -220,5 +301,19 @@
         font-size: 13px;
         height: 36px;
         text-align: left;
+    }
+
+    .exclusive-delivery {
+        margin-top: 25px;
+    }
+    .col-2 {
+        width: 49%;
+        margin: 1%;
+    }
+    .col-2:nth-child(odd) {
+        margin-left: 0;
+    }
+    .col-2:nth-child(even) {
+        margin-right: 0;
     }
 </style>
