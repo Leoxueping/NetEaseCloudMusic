@@ -193,7 +193,7 @@
     .list-item {
         display: flex;
         /*padding: 10px;  */
-        font-size: 1.5rem;
+        font-size: 1.7rem;
         line-height: 2;
     }
     .list-item-left {

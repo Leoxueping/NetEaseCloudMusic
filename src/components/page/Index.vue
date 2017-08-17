@@ -58,10 +58,10 @@
             </transition>
         </div>
 
-        <div class="exclusive-delivery">
+        <!-- <div class="exclusive-delivery">
             <div class="header">
                 <div class="list-left">
-                    <!-- <div ></div> -->
+                    <div ></div>
                     <div class="header-text">
                         <span>独家放送</span>
                         <i class="icon-angle-right"></i>
@@ -97,7 +97,7 @@
                     </div>
                 </transition> 
             </div>
-        </div>
+        </div> -->
         <!-- <music-player></music-player> -->
         <alert-info ref="alertInfo"></alert-info>
     </div>
